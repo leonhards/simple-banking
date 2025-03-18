@@ -1,0 +1,29 @@
+/* Basic admin styling */
+.sbs-admin .sbs-form {
+    background: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    max-width: 600px;
+}
+
+.sbs-admin .form-field {
+    margin-bottom: 15px;
+}
+
+.sbs-admin .form-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.sbs-admin .wp-list-table .column-actions a.button {
+    border: 0;
+}
+
+.sbs-admin .wp-list-table tbody td {
+    line-height: 2.1;
+}
+
+.sbs-admin .wp-list-table .column-actions a.button.button-delete {
+    color: rgb(211, 51, 51);
+}
