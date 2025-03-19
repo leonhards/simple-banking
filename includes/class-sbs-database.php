@@ -21,7 +21,7 @@ class SBS_Database
             cif_number VARCHAR(20) NOT NULL UNIQUE,
             full_name VARCHAR(100) NOT NULL,
             address TEXT NOT NULL,
-            email VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL UNIQUE,
             date_of_birth DATE NOT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
         ) $charset_collate;";

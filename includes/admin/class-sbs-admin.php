@@ -12,6 +12,28 @@ class SBS_Admin
     {
         add_action('admin_menu', array(__CLASS__, 'add_admin_menus'));
         add_action('admin_enqueue_scripts', array(__CLASS__, 'enqueue_admin_assets'));
+
+        // Hook form submit action for customer
+        add_action('admin_post_sbs_add_customer', array(__CLASS__, 'handle_customer_form'));
+        add_action('admin_post_sbs_edit_customer', array(__CLASS__, 'handle_customer_form'));
+        add_action('admin_post_sbs_delete_customer', array(__CLASS__, 'handle_customer_form'));
+    }
+
+    /**
+     * Redirect
+     */
+    public static function custom_admin_redirect($path, $args = array())
+    {
+        // Build the base URL
+        $url = admin_url('admin.php?page=' . $path);
+
+        // Add additional query arguments if provided
+        if (!empty($args)) {
+            $url = add_query_arg($args, $url);
+        }
+
+        // Redirect to the constructed URL
+        wp_redirect(esc_url_raw($url));
     }
 
     /**
@@ -89,115 +111,162 @@ class SBS_Admin
     public static function render_customers()
     {
         // Check user capabilities
-        // if (! current_user_can('manage_options')) {
-        //     wp_die(__('Unauthorized access', 'simple-bank-system'));
-        // }
+        if (! current_user_can('manage_options')) {
+            wp_die(__('Unauthorized access', 'simple-bank-system'));
+        }
 
         // Check if we're in edit mode
-        // $is_edit = isset($_GET['action']) && $_GET['action'] === 'edit';
-        // $customer = array();
+        $is_edit = isset($_GET['action']) && $_GET['action'] === 'edit';
+        $customer = array();
 
-        // if ($is_edit) {
-        //     // Get customer ID from URL
-        //     $customer_id = isset($_GET['id']) ? absint($_GET['id']) : 0;
+        if ($is_edit) {
+            // Get customer ID from URL
+            $customer_id = isset($_GET['id']) ? absint($_GET['id']) : 0;
 
-        //     // Fetch customer data
-        //     global $wpdb;
-        //     $table_name = $wpdb->prefix . SBS_TABLE_PREFIX . 'customers';
-        //     $customer = $wpdb->get_row($wpdb->prepare(
-        //         "SELECT * FROM $table_name WHERE id = %d",
-        //         $customer_id
-        //     ), ARRAY_A);
+            // Fetch customer data
+            $customer = SBS_Customer::get($customer_id);
 
-        //     if (!$customer) {
-        //         SBS_Admin_Notice::add('error', __('Customer not found.', 'simple-bank-system'));
-        //         return;
-        //     }
-        // }
-
-        // Handle form submissions first
-        self::handle_customer_form_submission();
+            if (!$customer) {
+                SBS_Admin_Notice::add('error', __('Customer not found.', 'simple-bank-system'));
+                return;
+            }
+        }
 
         // Display customer list and form
-        include SBS_PATH . 'includes/admin/views/customers.php';
+        include_once SBS_PATH . 'includes/admin/views/customers.php';
     }
 
     /**
-     * Process customer form submissions
+     * Handle all customer form actions (create, update, delete)
      */
-    private static function handle_customer_form_submission()
+    public static function handle_customer_form()
     {
-        // if (! isset($_POST['sbs_customer_nonce'])) return;
+        $slug = 'sbs-customers';
 
-        print_r($_POST);
-        // // Determine if this is an add or edit request
-        // $is_edit = isset($_GET['id']);
-        // $nonce_action = $is_edit ? 'sbs_edit_customer_' . $_GET['id'] : 'sbs_add_customer';
+        // Handle DELETE action
+        if ($_REQUEST['action'] === 'sbs_delete_customer') {
+            // Validate delete request
+            if (!isset($_GET['id']) || !isset($_GET['_wpnonce'])) {
+                wp_die(__('Invalid request.', 'simple-bank-system'));
+            }
 
-        // // Verify nonce and permissions
-        // if (! wp_verify_nonce($_POST['sbs_customer_nonce'], $nonce_action)) {
-        //     wp_die(__('Unauthorized action', 'simple-bank-system'));
-        // }
+            $customer_id = absint($_GET['id']);
+            if (!wp_verify_nonce($_GET['_wpnonce'], 'sbs_delete_customer_' . $customer_id)) {
+                wp_die(__('Invalid nonce.', 'simple-bank-system'));
+            }
 
-        // // Check user capabilities
-        // if (!current_user_can('manage_options')) {
-        //     wp_die(__('Unauthorized access.', 'simple-bank-system'));
-        // }
+            if (!current_user_can('manage_options')) {
+                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+            }
 
-        // // Sanitize input data
-        // $customer_data = array(
-        //     'cif_number'    => sanitize_text_field($_POST['cif_number']),
-        //     'full_name'     => sanitize_text_field($_POST['full_name']),
-        //     'address'       => sanitize_textarea_field($_POST['address']),
-        //     'email'         => sanitize_email($_POST['email']),
-        //     'date_of_birth' => sanitize_text_field($_POST['date_of_birth'])
-        // );
+            // Perform deletion
+            $result = SBS_Customer::delete($customer_id);
 
-        // // Validate required fields
-        // if (
-        //     empty($customer_data['cif_number']) || empty($customer_data['full_name']) || empty($customer_data['address'])
-        //     || empty($customer_data['email']) || empty($customer_data['date_of_birth'])
-        // ) {
-        //     SBS_Admin_Notice::add('error', __('All fields are required', 'simple-bank-system'));
-        //     return;
-        // }
+            // Handle results
+            if (is_wp_error($result)) {
+                SBS_Admin_Notice::add('error', $result->get_error_message());
+            } else {
+                SBS_Admin_Notice::add('success', __('Customer deleted successfully', 'simple-bank-system'));
+            }
 
-        // // Validate cif_number format
-        // if (!preg_match('/^\d+$/', $customer_data['cif_number'])) {
-        //     SBS_Admin_Notice::add('error', __('Invalid CIF number format. Please use digits only.', 'simple-bank-system'));
-        //     return;
-        // }
+            // Redirect to Customer table
+            self::custom_admin_redirect($slug);
+            exit;
+        }
 
-        // // Get and sanitize the date of birth
-        // $date_of_birth = $customer_data['date_of_birth'];
+        // Handle form submissions edit/delete (POST requests)
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sbs_customer_nonce'])) {
 
-        // // Validate date format
-        // if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_of_birth)) {
-        //     SBS_Admin_Notice::add('error', __('Invalid date format. Please use YYYY-MM-DD.', 'simple-bank-system'));
-        //     return;
-        // }
+            // Determine action type
+            $is_edit = isset($_POST['action']) && $_POST['action'] === 'sbs_edit_customer';
 
-        // // Validate date is in the past
-        // if (strtotime($date_of_birth) > time()) {
-        //     SBS_Admin_Notice::add('error', __('Date of birth cannot be in the future.', 'simple-bank-system'));
-        //     return;
-        // }
+            $customer_id = $is_edit ? absint($_POST['id']) : 0;
+            $nonce_action = $is_edit ? 'sbs_edit_customer_' . $customer_id : 'sbs_add_customer';
+            $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : [];
 
-        // // Validate reasonable date range (e.g., not before 1900)
-        // $min_date = strtotime('1900-01-01');
-        // if (strtotime($date_of_birth) < $min_date) {
-        //     SBS_Admin_Notice::add('error', __('Date of birth must be after 1900.', 'simple-bank-system'));
-        //     return;
-        // }
+            // Verify nonce
+            if (!wp_verify_nonce($_POST['sbs_customer_nonce'], $nonce_action)) {
+                wp_die(__('Unauthorized action', 'simple-bank-system'));
+            }
 
-        // // Save to database
-        // $result = SBS_Customer::create($customer_data);
+            // Check capabilities
+            if (!current_user_can('manage_options')) {
+                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+            }
 
-        // if (is_wp_error($result)) {
-        //     SBS_Admin_Notice::add('error', $result->get_error_message());
-        // } else {
-        //     SBS_Admin_Notice::add('success', __('Customer created successfully', 'simple-bank-system'));
-        // }
+            // Sanitize data
+            $customer_data = array(
+                'cif_number'    => sanitize_text_field($_POST['cif_number']),
+                'full_name'     => sanitize_text_field($_POST['full_name']),
+                'address'       => sanitize_textarea_field($_POST['address']),
+                'email'         => sanitize_email($_POST['email']),
+                'date_of_birth' => sanitize_text_field($_POST['date_of_birth'])
+            );
+
+            // Validate required fields
+            $required_fields = ['cif_number', 'full_name', 'address', 'email', 'date_of_birth'];
+            foreach ($required_fields as $field) {
+                if (empty($customer_data[$field])) {
+                    SBS_Admin_Notice::add('error', __('All fields are required', 'simple-bank-system'));
+                    $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
+                    self::custom_admin_redirect($slug, $args);
+                    exit;
+                }
+            }
+
+            // Validate CIF number format
+            if (!preg_match('/^\d+$/', $customer_data['cif_number'])) {
+                SBS_Admin_Notice::add('error', __('Invalid CIF format. Use numbers only.', 'simple-bank-system'));
+                $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
+                self::custom_admin_redirect($slug, $args);
+                exit;
+            }
+
+            // Date validation
+            $dob = $customer_data['date_of_birth'];
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
+                SBS_Admin_Notice::add('error', __('Invalid date format. Use YYYY-MM-DD.', 'simple-bank-system'));
+                $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
+                self::custom_admin_redirect($slug, $args);
+                exit;
+            }
+
+            if (strtotime($dob) > time()) {
+                SBS_Admin_Notice::add('error', __('Date of birth cannot be in the future.', 'simple-bank-system'));
+                $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
+                self::custom_admin_redirect($slug, $args);
+                exit;
+            }
+
+            if (strtotime($dob) < strtotime('1900-01-01')) {
+                SBS_Admin_Notice::add('error', __('Date of birth must be after 1900.', 'simple-bank-system'));
+                $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
+                self::custom_admin_redirect($slug, $args);
+                exit;
+            }
+
+            // Database operation
+            if ($is_edit) {
+                $result = SBS_Customer::update($customer_id, $customer_data);
+            } else {
+                $result = SBS_Customer::create($customer_data);
+            }
+
+            // Handle operation results
+            if (is_wp_error($result)) {
+                SBS_Admin_Notice::add('error', $result->get_error_message());
+            } else {
+                $notice = $is_edit
+                    ? __('Customer updated successfully.', 'simple-bank-system')
+                    : __('Customer created successfully.', 'simple-bank-system');
+                SBS_Admin_Notice::add('success', $notice);
+            }
+
+            // Redirect with appropriate parameters
+            $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : [];
+            self::custom_admin_redirect($slug, $args);
+            exit;
+        }
     }
 
     // Similar methods for accounts and transactions
