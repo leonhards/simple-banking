@@ -145,9 +145,6 @@ class SBS_Admin
         $dashboard = new SBS_Dashboard();
         $dashboard->display_summary_widget();
         $dashboard->display_transactions_widget();
-        // self::render_quick_stats();
-        // self::render_recent_transactions();
-        // self::render_system_status();
 
         echo '</div></div>';
     }
