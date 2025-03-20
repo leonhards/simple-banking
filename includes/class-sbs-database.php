@@ -5,7 +5,7 @@
  */
 class SBS_Database
 {
-    const DB_VERSION = '1.6';
+    const DB_VERSION = '1.7';
 
     /**
      * Creates plugin database tables on activation
@@ -29,7 +29,7 @@ class SBS_Database
             address TEXT NOT NULL,
             email VARCHAR(100) NOT NULL,
             date_of_birth DATE NOT NULL,
-            created_at DATETIME NOT NULL DEFAULT,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             UNIQUE KEY cif_number (cif_number),
             UNIQUE KEY email (email)
         ) $charset_collate;";
@@ -56,11 +56,15 @@ class SBS_Database
             amount DECIMAL(15,2) NOT NULL,
             description TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (account_id) REFERENCES $accounts_table(id) ON DELETE CASCADE
+            FOREIGN KEY (account_id) REFERENCES $accounts_table(id) ON DELETE CASCADE,
+            FOREIGN KEY (target_account_id) REFERENCES $accounts_table(id) ON DELETE SET NULL
         ) $charset_collate;";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-        dbDelta($sql);
+
+        foreach ($sql as $query) {
+            dbDelta($query);
+        }
 
         // Save database version
         update_option('sbs_db_version', self::DB_VERSION);
