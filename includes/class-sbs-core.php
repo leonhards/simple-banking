@@ -29,12 +29,16 @@ class SBS_Core
     {
         // Database and core components
         require_once SBS_PATH . 'includes/class-sbs-customer.php';
+        require_once SBS_PATH . 'includes/class-sbs-account.php';
+        require_once SBS_PATH . 'includes/class-sbs-transaction.php';
 
         // Admin interface
         if (is_admin()) {
             require_once SBS_PATH . 'includes/admin/class-sbs-admin.php';
             require_once SBS_PATH . 'includes/admin/class-sbs-admin-notice.php';
             require_once SBS_PATH . 'includes/admin/class-sbs-customer-list-table.php';
+            require_once SBS_PATH . 'includes/admin/class-sbs-account-list-table.php';
+            require_once SBS_PATH . 'includes/admin/class-sbs-transaction-list-table.php';
         }
     }
 }

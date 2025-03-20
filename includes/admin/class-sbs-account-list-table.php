@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Displays customers in WordPress admin list table format
+ * Displays a list of accounts in the WordPress admin.
  */
 
 // Loading WP_List_Table class file
@@ -10,13 +10,14 @@ if (!class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
 
-class SBS_Customer_List_Table extends WP_List_Table
+class SBS_Account_List_Table extends WP_List_Table
 {
+
     public function __construct()
     {
         parent::__construct(array(
-            'singular' => __('Customer', 'simple-bank-system'),
-            'plural'   => __('Customers', 'simple-bank-system'),
+            'singular' => __('Account', 'simple-bank-system'),
+            'plural'   => __('Accounts', 'simple-bank-system'),
             'ajax'     => false
         ));
     }
@@ -27,24 +28,25 @@ class SBS_Customer_List_Table extends WP_List_Table
     public function get_columns()
     {
         return array(
-            'cif_number'    => __('CIF Number', 'simple-bank-system'),
-            'full_name'     => __('Name', 'simple-bank-system'),
-            'address'       => __('Address', 'simple-bank-system'),
-            'email'         => __('Email', 'simple-bank-system'),
-            'date_of_birth' => __('Date of Birth', 'simple-bank-system'),
-            'actions'       => __('Actions', 'simple-bank-system')
+            'account_number' => __('Account No.', 'simple-bank-system'),
+            'customer_name'  => __('Name', 'simple-bank-system'),
+            'account_type'   => __('Type', 'simple-bank-system'),
+            'balance'        => __('Balance (Rp)', 'simple-bank-system'),
+            'status'         => __('Status', 'simple-bank-system'),
+            'actions'        => __('Actions', 'simple-bank-system')
         );
     }
 
     /**
-     * Define sortable columns
+     * Define sortable columns.
      */
     public function get_sortable_columns()
     {
         return array(
-            'cif_number'    => array('cif_number', false),
-            'full_name'     => array('full_name', false),
-            'created_at'    => array('created_at', true) // Sorted by default (descending)
+            'account_number' => array('account_number', false), // Not sorted by default
+            'customer_name'  => array('customer_name', false),  // Not sorted by default
+            'balance'        => array('balance', false),        // Not sorted by default
+            'created_at'     => array('created_at', true)       // Sorted by default (descending)
         );
     }
 
@@ -55,7 +57,7 @@ class SBS_Customer_List_Table extends WP_List_Table
     {
         global $wpdb;
 
-        // Define columns and sortable columns
+        // Define column headers
         $this->_column_headers = array(
             $this->get_columns(),
             array(),
@@ -63,8 +65,10 @@ class SBS_Customer_List_Table extends WP_List_Table
         );
 
         // Build the base query
+        $accounts_table = $wpdb->prefix . SBS_TABLE_PREFIX . 'accounts';
         $customers_table = $wpdb->prefix . SBS_TABLE_PREFIX . 'customers';
-        $query = "SELECT * FROM $customers_table";
+        $query = "SELECT a.*, c.full_name AS customer_name FROM $accounts_table a
+                  LEFT JOIN $customers_table c ON a.customer_id = c.id";
 
         // Handle search
         $search = isset($_REQUEST['s']) ? sanitize_text_field($_REQUEST['s']) : '';
@@ -73,9 +77,11 @@ class SBS_Customer_List_Table extends WP_List_Table
         if (!empty($search)) {
             $query .= $wpdb->prepare(
                 " WHERE
-                    cif_number LIKE %s OR
-                    full_name LIKE %s OR
-                    email LIKE %s",
+                    a.account_number LIKE %s OR
+                    a.account_type LIKE %s OR
+                    a.status LIKE %s OR
+                    c.full_name LIKE %s",
+                '%' . $wpdb->esc_like($search) . '%',
                 '%' . $wpdb->esc_like($search) . '%',
                 '%' . $wpdb->esc_like($search) . '%',
                 '%' . $wpdb->esc_like($search) . '%'
@@ -101,8 +107,8 @@ class SBS_Customer_List_Table extends WP_List_Table
         // Fetch the items
         $this->items = $wpdb->get_results($query, ARRAY_A);
 
-        // Set pagination
-        $total_items = $wpdb->get_var("SELECT COUNT(id) FROM $customers_table");
+        // Set pagination arguments
+        $total_items = $wpdb->get_var("SELECT COUNT(id) FROM $accounts_table");
         $this->set_pagination_args(array(
             'total_items' => $total_items,
             'per_page'    => $per_page,
@@ -111,44 +117,42 @@ class SBS_Customer_List_Table extends WP_List_Table
     }
 
     /**
-     * Add search box
+     * Render the customer name column.
      */
-    public function search_box($text, $input_id)
+    public function column_customer_name($item)
     {
-?>
-        <p class="search-box">
-            <label class="screen-reader-text" for="<?php echo esc_attr($input_id); ?>"><?php echo $text; ?>:</label>
-            <input type="search" id="<?php echo esc_attr($input_id); ?>" name="s" value="<?php _admin_search_query(); ?>" />
-            <?php submit_button($text, 'button', false, false, array('id' => 'search-submit')); ?>
-        </p>
-<?php
+        // Create a link to edit the customer
+        return '<a href="' . admin_url('admin.php?page=sbs-customers&action=edit&id=' . $item['customer_id']) . '">' . esc_html(ucfirst($item['customer_name'])) . '</a>';
     }
 
     /**
-     * Render individual columns
+     * Render the balance column format.
+     */
+    public function column_balance($item)
+    {
+        // Convert balance to format rupiah
+        return $this->format_rupiah($item['balance']);
+    }
+
+    /**
+     * Render the default column.
      */
     public function column_default($item, $column_name)
     {
         switch ($column_name) {
-            case 'cif_number':
-                return esc_html($item['cif_number']);
-            case 'full_name':
-                return esc_html(ucfirst($item['full_name']));
-            case 'address':
-                return esc_html($item['address']);
-            case 'email':
-                return sanitize_email($item['email']);
-            case 'date_of_birth':
-                return date_i18n(get_option('date_format'), strtotime($item['date_of_birth']));
+            case 'account_type':
+                return esc_html(ucfirst($item['account_type']));
+            case 'status':
+                return esc_html(ucfirst($item['status']));
             case 'actions':
-                $edit_url = admin_url('admin.php?page=sbs-customers&action=edit&id=' . $item['id']);
+                $edit_url = admin_url('admin.php?page=sbs-accounts&action=edit&id=' . $item['id']);
 
                 $delete_url = admin_url('admin-post.php');
                 $delete_url = add_query_arg([
-                    'action' => 'sbs_delete_customer',
+                    'action' => 'sbs_delete_account',
                     'id' => $item['id'],
                 ], $delete_url);
-                $delete_url = wp_nonce_url($delete_url, 'sbs_delete_customer_' . $item['id']);
+                $delete_url = wp_nonce_url($delete_url, 'sbs_delete_account_' . $item['id']);
 
                 return sprintf(
                     '<a href="%s" class="button button-edit">%s</a> ' .
@@ -159,7 +163,15 @@ class SBS_Customer_List_Table extends WP_List_Table
                     esc_html__('Delete', 'simple-bank-system')
                 );
             default:
-                return print_r($item, true);
+                return isset($item[$column_name]) ? esc_html($item[$column_name]) : '';
         }
+    }
+
+    /**
+     * Render number in Rupiah format.
+     */
+    public function format_rupiah($number)
+    {
+        return number_format((float)$number, 2, ',', '.');
     }
 }

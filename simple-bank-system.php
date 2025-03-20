@@ -28,3 +28,6 @@ require_once SBS_PATH . 'includes/class-sbs-core.php';
 
 // Initialize plugin
 add_action('plugins_loaded', array('SBS_Core', 'init'));
+
+// Run database update check
+add_action('init', array('SBS_Database', 'check_db_update'));

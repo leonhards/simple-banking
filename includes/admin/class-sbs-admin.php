@@ -13,10 +13,36 @@ class SBS_Admin
         add_action('admin_menu', array(__CLASS__, 'add_admin_menus'));
         add_action('admin_enqueue_scripts', array(__CLASS__, 'enqueue_admin_assets'));
 
-        // Hook form submit action for customer
-        add_action('admin_post_sbs_add_customer', array(__CLASS__, 'handle_customer_form'));
-        add_action('admin_post_sbs_edit_customer', array(__CLASS__, 'handle_customer_form'));
-        add_action('admin_post_sbs_delete_customer', array(__CLASS__, 'handle_customer_form'));
+        // Hook form submit action
+        $form_types = ['customer', 'account', 'transaction'];
+        $actions = ['add', 'edit', 'delete'];
+
+        // Loop through form types and actions to register hooks
+        foreach ($form_types as $form_type) {
+            foreach ($actions as $action) {
+                $hook_name = "admin_post_sbs_{$action}_{$form_type}";
+                $handler_method = "handle_{$form_type}_form";
+                add_action($hook_name, array(__CLASS__, $handler_method));
+            }
+        }
+
+        /**
+         * TODO: deprecated
+         */
+        // Hook form submit action for customers
+        // add_action('admin_post_sbs_add_customer', array(__CLASS__, 'handle_customer_form'));
+        // add_action('admin_post_sbs_edit_customer', array(__CLASS__, 'handle_customer_form'));
+        // add_action('admin_post_sbs_delete_customer', array(__CLASS__, 'handle_customer_form'));
+
+        // // Hook form submit action for accounts
+        // add_action('admin_post_sbs_add_account', array(__CLASS__, 'handle_account_form'));
+        // add_action('admin_post_sbs_edit_account', array(__CLASS__, 'handle_account_form'));
+        // add_action('admin_post_sbs_delete_account', array(__CLASS__, 'handle_account_form'));
+
+        // // Hook form submit action for transactions
+        // add_action('admin_post_sbs_add_transaction', array(__CLASS__, 'handle_transaction_form'));
+        // add_action('admin_post_sbs_edit_transaction', array(__CLASS__, 'handle_transaction_form'));
+        // add_action('admin_post_sbs_delete_transaction', array(__CLASS__, 'handle_transaction_form'));
     }
 
     /**
@@ -54,7 +80,9 @@ class SBS_Admin
 
         // Submenus
         $submenus = array(
-            'customers' => __('Customers', 'simple-bank-system'),
+            'customers'     => __('Customers', 'simple-bank-system'),
+            'accounts'      => __('Accounts', 'simple-bank-system'),
+            'transactions'  => __('Transactions', 'simple-bank-system'),
         );
 
         foreach ($submenus as $slug => $title) {
@@ -80,6 +108,14 @@ class SBS_Admin
                 SBS_URL . 'assets/css/admin.css',
                 array(),
                 filemtime(SBS_PATH . 'assets/css/admin.css')
+            );
+
+            wp_enqueue_script(
+                'script-js',
+                SBS_URL . 'assets/js/script.js',
+                array('jquery'),
+                '1.0',
+                true // Load in footer
             );
         }
     }
@@ -133,11 +169,56 @@ class SBS_Admin
         }
 
         // Display customer list and form
-        include_once SBS_PATH . 'includes/admin/views/customers.php';
+        include SBS_PATH . 'includes/admin/views/customers.php';
     }
 
     /**
-     * Handle all customer form actions (create, update, delete)
+     * Render customers management interface
+     */
+    public static function render_accounts()
+    {
+        // Check user capabilities
+        if (! current_user_can('manage_options')) {
+            wp_die(__('Unauthorized access', 'simple-bank-system'));
+        }
+
+        // Check if we're in edit mode
+        $is_edit = isset($_GET['action']) && $_GET['action'] === 'edit';
+        $account = array();
+
+        if ($is_edit) {
+            // Get customer ID from URL
+            $account_id = isset($_GET['id']) ? absint($_GET['id']) : 0;
+
+            // Fetch customer data
+            $account = SBS_Account::get($account_id);
+
+            if (!$account) {
+                SBS_Admin_Notice::add('error', __('Account not found.', 'simple-bank-system'));
+                return;
+            }
+        }
+
+        // Display customer list and form
+        include SBS_PATH . 'includes/admin/views/accounts.php';
+    }
+
+    /**
+     * Render transactions management interface
+     */
+    public static function render_transactions()
+    {
+        // Check user capabilities
+        if (! current_user_can('manage_options')) {
+            wp_die(__('Unauthorized access', 'simple-bank-system'));
+        }
+
+        // Display customer list and form
+        include SBS_PATH . 'includes/admin/views/transactions.php';
+    }
+
+    /**
+     * Handle all customer form submissions (create, update, delete)
      */
     public static function handle_customer_form()
     {
@@ -196,17 +277,16 @@ class SBS_Admin
 
             // Sanitize data
             $customer_data = array(
-                'cif_number'    => sanitize_text_field($_POST['cif_number']),
-                'full_name'     => sanitize_text_field($_POST['full_name']),
-                'address'       => sanitize_textarea_field($_POST['address']),
-                'email'         => sanitize_email($_POST['email']),
-                'date_of_birth' => sanitize_text_field($_POST['date_of_birth'])
+                'cif_number'     => sanitize_text_field($_POST['cif_number']),
+                'full_name'      => sanitize_text_field($_POST['full_name']),
+                'address'        => sanitize_textarea_field($_POST['address']),
+                'email'          => sanitize_email($_POST['email']),
+                'date_of_birth'  => sanitize_text_field($_POST['date_of_birth'])
             );
 
             // Validate required fields
-            $required_fields = ['cif_number', 'full_name', 'address', 'email', 'date_of_birth'];
-            foreach ($required_fields as $field) {
-                if (empty($customer_data[$field])) {
+            foreach ($customer_data as $value) {
+                if (empty($value)) {
                     SBS_Admin_Notice::add('error', __('All fields are required', 'simple-bank-system'));
                     $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
                     self::custom_admin_redirect($slug, $args);
@@ -245,14 +325,14 @@ class SBS_Admin
                 exit;
             }
 
-            // Database operation
+            // Save or update the account
             if ($is_edit) {
                 $result = SBS_Customer::update($customer_id, $customer_data);
             } else {
                 $result = SBS_Customer::create($customer_data);
             }
 
-            // Handle operation results
+            // Handle the result
             if (is_wp_error($result)) {
                 SBS_Admin_Notice::add('error', $result->get_error_message());
             } else {
@@ -262,12 +342,221 @@ class SBS_Admin
                 SBS_Admin_Notice::add('success', $notice);
             }
 
-            // Redirect with appropriate parameters
+            // Redirect back to the customers list
             $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : [];
             self::custom_admin_redirect($slug, $args);
             exit;
         }
     }
 
-    // Similar methods for accounts and transactions
+    /**
+     * Handles all account form submissions (add, edit, delete).
+     */
+    public static function handle_account_form()
+    {
+        $slug = 'sbs-accounts';
+
+        // Handle delete action
+        if ($_REQUEST['action'] === 'sbs_delete_account') {
+            // Validate delete request
+            if (!isset($_GET['id']) || !isset($_GET['_wpnonce'])) {
+                wp_die(__('Invalid request.', 'simple-bank-system'));
+            }
+
+            $account_id = absint($_GET['id']);
+            if (!wp_verify_nonce($_GET['_wpnonce'], 'sbs_delete_account_' . $account_id)) {
+                wp_die(__('Invalid nonce.', 'simple-bank-system'));
+            }
+
+            // Verify nonce and permissions
+            if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'sbs_delete_account_' . $_GET['id'])) {
+                wp_die(__('Invalid request.', 'simple-bank-system'));
+            }
+
+            if (!current_user_can('manage_options')) {
+                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+            }
+
+            // Delete the account
+            $result = SBS_Account::delete($_GET['id']);
+
+            // Handle the result
+            if (is_wp_error($result)) {
+                SBS_Admin_Notice::add('error', $result->get_error_message());
+            } else {
+                SBS_Admin_Notice::add('success', __('Account deleted successfully.', 'simple-bank-system'));
+            }
+
+            // Redirect to Account table
+            self::custom_admin_redirect($slug);
+            exit;
+        }
+
+        // Handle form submissions edit/delete (POST requests)
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sbs_account_nonce'])) {
+
+            // Determine action type
+            $is_edit = isset($_POST['action']) && $_POST['action'] === 'sbs_edit_account';
+
+            $account_id = $is_edit ? absint($_POST['id']) : 0;
+            $nonce_action = $is_edit ? 'sbs_edit_account_' . $account_id : 'sbs_add_account';
+            $args = $is_edit ? ['action' => 'edit', 'id' => $account_id] : [];
+
+            // Verify nonce
+            if (!wp_verify_nonce($_POST['sbs_account_nonce'], $nonce_action)) {
+                wp_die(__('Unauthorized action', 'simple-bank-system'));
+            }
+
+            // Check capabilities
+            if (!current_user_can('manage_options')) {
+                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+            }
+
+            // Sanitize input data
+            $account_data = array(
+                'customer_id'    => absint($_POST['customer_id']),
+                'account_number' => sanitize_text_field($_POST['account_number']),
+                'account_type'   => sanitize_text_field($_POST['account_type']),
+                'balance'        => floatval($_POST['balance']),
+                'status'         => sanitize_text_field($_POST['status'])
+            );
+
+            // Validate required fields
+            foreach ($account_data as $value) {
+                if (empty($value)) {
+                    SBS_Admin_Notice::add('error', __('All fields are required', 'simple-bank-system'));
+                    $args = $is_edit ? ['action' => 'edit', 'id' => $account_id] : ['action' => 'add'];
+                    self::custom_admin_redirect($slug, $args);
+                    exit;
+                }
+            }
+
+            // Save or update the account
+            if ($is_edit) {
+                $result = SBS_Account::update($account_id, $account_data);
+            } else {
+                $result = SBS_Account::create($account_data);
+            }
+
+            // Handle the result
+            if (is_wp_error($result)) {
+                SBS_Admin_Notice::add('error', $result->get_error_message());
+            } else {
+                $notice = $is_edit
+                    ? __('Account updated successfully.', 'simple-bank-system')
+                    : __('Account created successfully.', 'simple-bank-system');
+                SBS_Admin_Notice::add('success', $notice);
+            }
+
+            // Redirect back to the accounts list
+            $args = $is_edit ? ['action' => 'edit', 'id' => $account_id] : [];
+            self::custom_admin_redirect($slug, $args);
+            exit;
+        }
+    }
+
+    /**
+     * Handles all transaction form submissions (add, edit, delete).
+     */
+    public static function handle_transaction_form()
+    {
+
+        $slug = 'sbs-transactions';
+
+        // Handle DELETE action
+        if ($_REQUEST['action'] === 'sbs_delete_transaction') {
+            // Validate delete request
+            if (!isset($_GET['id']) || !isset($_GET['_wpnonce'])) {
+                wp_die(__('Invalid request.', 'simple-bank-system'));
+            }
+
+            $transaction_id = absint($_GET['id']);
+            if (!wp_verify_nonce($_GET['_wpnonce'], 'sbs_delete_customer_' . $transaction_id)) {
+                wp_die(__('Invalid nonce.', 'simple-bank-system'));
+            }
+
+            if (!current_user_can('manage_options')) {
+                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+            }
+
+            // Perform deletion
+            $result = SBS_Transaction::delete($transaction_id);
+
+            // Handle results
+            if (is_wp_error($result)) {
+                SBS_Admin_Notice::add('error', $result->get_error_message());
+            } else {
+                SBS_Admin_Notice::add('success', __('Transaction deleted successfully', 'simple-bank-system'));
+            }
+
+            // Redirect to Customer table
+            self::custom_admin_redirect($slug);
+            exit;
+        }
+
+        // Handle form submissions edit/delete (POST requests)
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sbs_transaction_nonce'])) {
+
+            // Determine action type
+            $is_edit = isset($_POST['action']) && $_POST['action'] === 'sbs_edit_transaction';
+
+            $transaction_id = $is_edit ? absint($_POST['id']) : 0;
+            $nonce_action = $is_edit ? 'sbs_edit_transaction_' . $transaction_id : 'sbs_add_transaction';
+            $args = $is_edit ? ['action' => 'edit', 'id' => $transaction_id] : [];
+
+            // Verify nonce
+            if (!wp_verify_nonce($_POST['sbs_transaction_nonce'], $nonce_action)) {
+                wp_die(__('Unauthorized action', 'simple-bank-system'));
+            }
+
+            // Check capabilities
+            if (!current_user_can('manage_options')) {
+                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+            }
+
+            // Sanitize input data
+            $transaction_data = array(
+                'account_id'        => absint($_POST['account_id']),
+                'transaction_type'  => sanitize_text_field($_POST['transaction_type']),
+                'amount'            => floatval($_POST['amount']),
+                'description'       => sanitize_textarea_field($_POST['description'])
+            );
+
+            // Validate required fields
+            foreach ($transaction_data as $value) {
+                if (empty($value)) {
+                    SBS_Admin_Notice::add('error', __('All fields are required', 'simple-bank-system'));
+                    $args = $is_edit ? ['action' => 'edit', 'id' => $transaction_id] : ['action' => 'add'];
+                    self::custom_admin_redirect($slug, $args);
+                    exit;
+                }
+            }
+
+            // Field target_account_id is not mandatory
+            $transaction_data['target_account_id'] = sanitize_text_field($_POST['target_account_id']);
+
+            // Save or update the account
+            if ($is_edit) {
+                $result = SBS_Transaction::update($transaction_id, $transaction_data);
+            } else {
+                // Perform the transaction before saving the log
+                $result = SBS_Transaction::perform_transaction($transaction_data);
+            }
+
+            // Handle the result
+            if (is_wp_error($result)) {
+                SBS_Admin_Notice::add('error', $result->get_error_message());
+            } else {
+                $notice = $is_edit
+                    ? __('Transaction updated successfully.', 'simple-bank-system')
+                    : __('Transaction created successfully.', 'simple-bank-system');
+                SBS_Admin_Notice::add('success', $notice);
+            }
+
+            // Redirect back to the accounts list
+            $args = $is_edit ? ['action' => 'edit', 'id' => $transaction_id] : [];
+            self::custom_admin_redirect($slug, $args);
+            exit;
+        }
+    }
 }

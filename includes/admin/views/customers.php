@@ -1,9 +1,10 @@
 <?php
 
 /**
- * Customer Form Template
+ * Customers View Template
  * Handles both Add and Edit modes
  */
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
@@ -18,7 +19,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
 
 <div class="wrap sbs-admin">
 
-    <?php if (! isset($_GET['action']) || $_GET['action'] === 'delete') : ?>
+    <?php if (! isset($_GET['action']) || $_GET['action'] === 'sbs_delete_customer') : ?>
         <h1 class="wp-heading-inline">
             <?php esc_html_e('Manage Customers', 'simple-bank-system'); ?>
             <a href="<?php echo esc_url(admin_url('admin.php?page=sbs-customers&action=add')); ?>" class="page-title-action">
@@ -62,6 +63,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
                 <label for="cif_number"><?php esc_html_e('CIF Number', 'simple-bank-system'); ?></label>
                 <input type="text"
                     name="cif_number"
+                    id="cif_number"
                     value="<?php echo $is_edit ? esc_attr($customer['cif_number']) : ''; ?>"
                     pattern="\d+"
                     required>
@@ -71,6 +73,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
                 <label for="full_name"><?php esc_html_e('Full Name', 'simple-bank-system'); ?></label>
                 <input type="text"
                     name="full_name"
+                    id="full_name"
                     value="<?php echo $is_edit ? esc_attr($customer['full_name']) : ''; ?>"
                     required>
             </div>
@@ -79,6 +82,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
                 <label for="address"><?php esc_html_e('Address', 'simple-bank-system'); ?></label>
                 <input type="text"
                     name="address"
+                    id="address"
                     value="<?php echo $is_edit ? esc_attr($customer['address']) : ''; ?>"
                     required>
             </div>
@@ -87,6 +91,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
                 <label for="email"><?php esc_html_e('Email', 'simple-bank-system'); ?></label>
                 <input type="email"
                     name="email"
+                    id="email"
                     value="<?php echo $is_edit ? esc_attr($customer['email']) : ''; ?>"
                     placeholder="example@domain.com"
                     required>
@@ -96,6 +101,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
                 <label for="date_of_birth"><?php esc_html_e('Date of Birth', 'simple-bank-system'); ?></label>
                 <input type="text"
                     name="date_of_birth"
+                    id="date_of_birth"
                     value="<?php echo $is_edit ? esc_attr($customer['date_of_birth']) : ''; ?>"
                     max="<?php echo esc_attr(date('Y-m-d')); ?>"
                     placeholder="YYYY-MM-DD"

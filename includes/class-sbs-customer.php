@@ -18,45 +18,28 @@ class SBS_Customer
         global $wpdb;
         $table = $wpdb->prefix . self::$table_name;
 
-        // Validate required fields
-        if (
-            empty($data['cif_number']) || empty($data['full_name']) || empty($data['address'])
-            || empty($data['email']) || empty($data['date_of_birth'])
-        ) {
-            return new WP_Error('missing_fields', __('Required fields are missing', 'simple-bank-system'));
-        }
-
         // Check for duplicate email
-        $existing_email = $wpdb->get_var($wpdb->prepare(
+        $check_email = $wpdb->get_var($wpdb->prepare(
             "SELECT email FROM $table WHERE email = %s",
             $data['email']
         ));
 
-        if ($existing_email) {
+        if ($check_email) {
             return new WP_Error('duplicate_email', __('A customer with email \'' . $data['email'] . '\' already exists.', 'simple-bank-system'));
         }
 
         // Check for duplicate CIF number
-        $existing_cif = $wpdb->get_var($wpdb->prepare(
+        $check_cif = $wpdb->get_var($wpdb->prepare(
             "SELECT cif_number FROM $table WHERE cif_number = %s",
             $data['cif_number']
         ));
 
-        if ($existing_cif) {
+        if ($check_cif) {
             return new WP_Error('duplicate_cif', __('A customer with CIF number \'' . $data['cif_number'] . '\' already exists.', 'simple-bank-system'));
         }
 
-        // Prepare sanitized data
-        $customer_data = array(
-            'cif_number'    => sanitize_text_field($data['cif_number']),
-            'full_name'     => sanitize_text_field($data['full_name']),
-            'address'       => sanitize_textarea_field($data['address']),
-            'email'         => sanitize_email($data['email']),
-            'date_of_birth' => sanitize_text_field($data['date_of_birth']),
-        );
-
         // Insert using WordPress database methods
-        $result = $wpdb->insert($table, $customer_data);
+        $result = $wpdb->insert($table, $data);
 
         if (false === $result) {
             return new WP_Error('db_error', __('Failed to insert customer.', 'simple-bank-system'));
@@ -75,14 +58,6 @@ class SBS_Customer
     {
         global $wpdb;
         $table = $wpdb->prefix . self::$table_name;
-
-        // Validate required fields
-        if (
-            empty($id) || empty($data['cif_number']) || empty($data['full_name']) || empty($data['address'])
-            || empty($data['email']) || empty($data['date_of_birth'])
-        ) {
-            return new WP_Error('missing_fields', __('Required fields are missing', 'simple-bank-system'));
-        }
 
         // Update the customer record
         $result = $wpdb->update(
@@ -137,7 +112,7 @@ class SBS_Customer
 
         // Sanitize the ID
         $customer_id = absint($id);
-        if (!$id) {
+        if (!$customer_id) {
             return new WP_Error('invalid_id', __('Invalid customer ID.', 'simple-bank-system'));
         }
 
@@ -153,5 +128,19 @@ class SBS_Customer
         }
 
         return $customer;
+    }
+
+    /**
+     * Get all customers.
+     *
+     * @return array An array of customers, each as an associative array.
+     */
+    public static function get_all()
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . self::$table_name;
+
+        // Retrieve all accounts from the database
+        return $wpdb->get_results("SELECT * FROM $table", ARRAY_A);
     }
 }
