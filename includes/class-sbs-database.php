@@ -5,7 +5,7 @@
  */
 class SBS_Database
 {
-    const DB_VERSION = '1.7';
+    const DB_VERSION = '1.9';
 
     /**
      * Creates plugin database tables on activation
@@ -23,7 +23,7 @@ class SBS_Database
 
         // Table structure for customers
         $sql[] = "CREATE TABLE $customers_table (
-            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             cif_number VARCHAR(20) NOT NULL,
             full_name VARCHAR(100) NOT NULL,
             address TEXT NOT NULL,
@@ -31,12 +31,13 @@ class SBS_Database
             date_of_birth DATE NOT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             UNIQUE KEY cif_number (cif_number),
-            UNIQUE KEY email (email)
+            UNIQUE KEY email (email),
+            PRIMARY KEY  (id)
         ) $charset_collate;";
 
         // Table structure for accounts
         $sql[] = "CREATE TABLE $accounts_table (
-            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             account_number VARCHAR(20) NOT NULL,
             customer_id BIGINT UNSIGNED NOT NULL,
             account_type ENUM('saving', 'deposit') NOT NULL DEFAULT 'saving',
@@ -44,27 +45,31 @@ class SBS_Database
             status ENUM('active', 'inactive', 'closed') NOT NULL DEFAULT 'active',
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             UNIQUE KEY account_number (account_number),
-            FOREIGN KEY (customer_id) REFERENCES $customers_table(id) ON DELETE CASCADE
+            PRIMARY KEY  (id)
         ) $charset_collate;";
 
         // Table structure for transactions
         $sql[] = "CREATE TABLE $transactions_table (
-            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             account_id BIGINT UNSIGNED NOT NULL,
             transaction_type ENUM('deposit', 'withdrawal', 'transfer') NOT NULL,
             target_account_id BIGINT UNSIGNED DEFAULT NULL,
             amount DECIMAL(15,2) NOT NULL,
             description TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (account_id) REFERENCES $accounts_table(id) ON DELETE CASCADE,
-            FOREIGN KEY (target_account_id) REFERENCES $accounts_table(id) ON DELETE SET NULL
+            PRIMARY KEY  (id)
         ) $charset_collate;";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
+        // Create tables
         foreach ($sql as $query) {
             dbDelta($query);
         }
+
+        // Add foreign keys after tables are created
+        $wpdb->query("ALTER TABLE $accounts_table ADD FOREIGN KEY (customer_id) REFERENCES $customers_table(id) ON DELETE CASCADE;");
+        $wpdb->query("ALTER TABLE $transactions_table ADD FOREIGN KEY (account_id) REFERENCES $accounts_table(id) ON DELETE CASCADE;");
 
         // Save database version
         update_option('sbs_db_version', self::DB_VERSION);
