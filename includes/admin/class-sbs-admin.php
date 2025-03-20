@@ -305,14 +305,6 @@ class SBS_Admin
                 }
             }
 
-            // Validate CIF number format
-            if (!preg_match('/^\d+$/', $customer_data['cif_number'])) {
-                SBS_Admin_Notice::add('error', __('Invalid CIF format. Use numbers only.', PLUGIN_TEXT_DOMAIN));
-                $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
-                self::custom_admin_redirect($slug, $args);
-                exit;
-            }
-
             // Date validation
             $dob = $customer_data['date_of_birth'];
             if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {

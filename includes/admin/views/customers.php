@@ -65,7 +65,6 @@ $submit_text = $is_edit ? __('Update Customer', PLUGIN_TEXT_DOMAIN) : __('Add Cu
                     name="cif_number"
                     id="cif_number"
                     value="<?php echo $is_edit ? esc_attr($customer['cif_number']) : ''; ?>"
-                    pattern="\d+"
                     required>
             </div>
 
