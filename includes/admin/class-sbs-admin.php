@@ -122,7 +122,7 @@ class SBS_Admin
                 'script-js',
                 SBS_URL . 'assets/js/script.js',
                 array('jquery'),
-                '1.0',
+                '1.2',
                 true // Load in footer
             );
         }
