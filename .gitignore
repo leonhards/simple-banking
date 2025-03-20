@@ -1,0 +1,28 @@
+# Ignore everything except the plugin directory
+wp-content/*
+!wp-content/plugins/
+!wp-content/plugins/simple-banking/
+
+# Ignore WordPress core files
+wordpress/*
+
+# Ignore PHPUnit tests and vendor dependencies
+vendor/
+tests/
+phpunit.xml
+phpunit.xml.dist
+composer.lock
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+*.log
+*.cache
+*.tmp
+
+# Ignore IDE and OS-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak

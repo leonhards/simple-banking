@@ -1,0 +1,23 @@
+{
+  "name": "leon/simple-banking",
+  "description": "A simple banking system for WordPress",
+  "type": "wordpress-plugin",
+  "autoload": {
+    "classmap": [
+      "includes/admin/"
+    ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/Unit/"
+    ]
+  },
+  "authors": [
+    {
+      "name": "Leon Sinaga"
+    }
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "^9.6"
+  }
+}
