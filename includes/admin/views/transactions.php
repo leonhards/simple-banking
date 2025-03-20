@@ -48,7 +48,7 @@ $accounts = SBS_Account::get_all();
             $transaction_table->display(); ?>
         </div>
 
-    <? else : ?>
+    <?php else : ?>
 
         <h1 class="wp-heading-inline">
             <?php echo $form_title; ?>

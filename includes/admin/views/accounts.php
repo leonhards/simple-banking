@@ -44,7 +44,7 @@ $submit_text = $is_edit ? __('Update Account', PLUGIN_TEXT_DOMAIN) : __('Add Acc
             $account_table->display(); ?>
         </div>
 
-    <? else : ?>
+    <?php else : ?>
 
         <h1 class="wp-heading-inline">
             <?php echo $form_title; ?>

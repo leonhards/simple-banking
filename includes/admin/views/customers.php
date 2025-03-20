@@ -43,7 +43,7 @@ $submit_text = $is_edit ? __('Update Customer', PLUGIN_TEXT_DOMAIN) : __('Add Cu
             $customer_table->display(); ?>
         </div>
 
-    <? else : ?>
+    <?php else : ?>
 
         <h1 class="wp-heading-inline">
             <?php echo $form_title; ?>
