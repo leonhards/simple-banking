@@ -16,7 +16,7 @@ defined('ABSPATH') || exit; // Prevent direct access
 define('SBS_PATH', plugin_dir_path(__FILE__));
 define('SBS_URL', plugin_dir_url(__FILE__));
 define('SBS_TABLE_PREFIX', 'sbs_');
-define('PLUGIN_TEXT_DOMAIN', PLUGIN_TEXT_DOMAIN);
+define('PLUGIN_TEXT_DOMAIN', 'simple-bank-system');
 
 // Load database class before activation hook
 require_once SBS_PATH . 'includes/class-sbs-database.php';
