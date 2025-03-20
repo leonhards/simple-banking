@@ -42,4 +42,19 @@
       amountInput.val(rawValue);
     });
   });
+
+  // Show/hide transfer target field dynamically
+  jQuery(document).ready(function ($) {
+    $("#transaction_type")
+      .change(function () {
+        if ($(this).val() === "transfer") {
+          $(".transfer-field").show();
+          $("#target_account_id").prop("required", true);
+        } else {
+          $(".transfer-field").hide();
+          $("#target_account_id").prop("required", false);
+        }
+      })
+      .trigger("change");
+  });
 })(jQuery);

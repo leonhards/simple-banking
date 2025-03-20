@@ -9,6 +9,9 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+// Initialize $transaction as an empty array if not defined
+$transaction = isset($transaction) ? $transaction : [];
+
 // Determine if we're in edit mode
 $is_edit = !empty($transaction);
 $form_title  = $is_edit ? __('Edit Transaction', PLUGIN_TEXT_DOMAIN) : __('Add Transaction', PLUGIN_TEXT_DOMAIN);
@@ -71,7 +74,7 @@ $accounts = SBS_Account::get_all();
                     <?php
                     foreach ($accounts as $account) {
                         echo '<option value="' . esc_attr($account['id']) . '" ' .
-                            selected($transaction && $transaction['account_id'] === $account['id'], true, false) . '>' .
+                            selected($is_edit && $transaction['account_id'] === $account['id'], true, false) . '>' .
                             esc_html($account['account_number']) . ' - ' . SBS_Customer::get($account['customer_id'])['full_name'] . '</option>';
                     }
                     ?>
@@ -82,13 +85,13 @@ $accounts = SBS_Account::get_all();
                 <label for="transaction_type"><?php esc_html_e('Transaction Type', PLUGIN_TEXT_DOMAIN); ?></label>
                 <select name="transaction_type" id="transaction_type" required>
                     <option value=""><?php esc_html_e('Select Type', PLUGIN_TEXT_DOMAIN); ?></option>
-                    <option value="deposit" <?php selected($transaction && $transaction['transaction_type'] === 'deposit', true); ?>>
+                    <option value="deposit" <?php selected($is_edit && $transaction['transaction_type'] === 'deposit', true); ?>>
                         <?php esc_html_e('Deposit', PLUGIN_TEXT_DOMAIN); ?>
                     </option>
-                    <option value="withdrawal" <?php selected($transaction && $transaction['transaction_type'] === 'withdrawal', true); ?>>
+                    <option value="withdrawal" <?php selected($is_edit && $transaction['transaction_type'] === 'withdrawal', true); ?>>
                         <?php esc_html_e('Withdrawal', PLUGIN_TEXT_DOMAIN); ?>
                     </option>
-                    <option value="transfer" <?php selected($transaction && $transaction['transaction_type'] === 'transfer', true); ?>>
+                    <option value="transfer" <?php selected($is_edit && $transaction['transaction_type'] === 'transfer', true); ?>>
                         <?php esc_html_e('Transfer', PLUGIN_TEXT_DOMAIN); ?>
                     </option>
                 </select>
@@ -101,7 +104,7 @@ $accounts = SBS_Account::get_all();
                     <?php
                     foreach ($accounts as $account) {
                         echo '<option value="' . esc_attr($account['id']) . '" ' .
-                            selected($transaction && $transaction['target_account_id'] === $account['id'], true, false) . '>' .
+                            selected($is_edit && $transaction['target_account_id'] === $account['id'], true, false) . '>' .
                             esc_html($account['account_number']) . ' - ' . SBS_Customer::get($account['customer_id'])['full_name'] . '</option>';
                     }
                     ?>
@@ -113,7 +116,7 @@ $accounts = SBS_Account::get_all();
                 <input type="text"
                     name="amount"
                     id="amount"
-                    value="<?php echo esc_attr($transaction ? (int)$transaction['amount'] : ''); ?>"
+                    value="<?php echo esc_attr($is_edit ? (int)$transaction['amount'] : ''); ?>"
                     required>
             </div>
 
@@ -136,20 +139,5 @@ $accounts = SBS_Account::get_all();
                 </p>
             </div>
         </form>
-
-        <script>
-            // Show/hide transfer target field dynamically
-            jQuery(document).ready(function($) {
-                $('#transaction_type').change(function() {
-                    if ($(this).val() === 'transfer') {
-                        $('.transfer-field').show();
-                        $('#target_account_id').prop('required', true);
-                    } else {
-                        $('.transfer-field').hide();
-                        $('#target_account_id').prop('required', false);
-                    }
-                }).trigger('change');
-            });
-        </script>
     <?php endif; ?>
 </div>

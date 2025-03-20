@@ -90,7 +90,7 @@ class SBS_Dashboard
             echo "<td>" . esc_html($tx['created_at']) . "</td>";
             echo "<td>" . esc_html($tx['account_id']) . "</td>";
             echo "<td>" . number_format($tx['amount'], 2) . "</td>";
-            echo "<td>" . esc_html($tx['transaction_type']) . "</td>";
+            echo "<td>" . esc_html(ucfirst($tx['transaction_type'])) . "</td>";
             echo "</tr>";
         }
 
