@@ -48,6 +48,6 @@ Before starting, ensure you have installed:
    - **Username:** admin
    - **Password:** admin
 
-4. On the left menu, click Plugins > Installed Plugins then activate 'Simple Banking System'.
+4. On the left menu, click Plugins > Installed Plugins then activate 'Simple Bank System'.
 
 5. New menu will be added called 'Banking'.
