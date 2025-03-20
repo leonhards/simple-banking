@@ -5,11 +5,17 @@
  */
 class SBS_Admin
 {
+
+    private static $role;
+
     /**
      * Initialize admin features
      */
     public static function init()
     {
+        self::$role = 'edit_posts';
+
+        add_action('admin_menu', array(__CLASS__, 'remove_comments_menu_for_editors'));
         add_action('admin_menu', array(__CLASS__, 'add_admin_menus'));
         add_action('admin_enqueue_scripts', array(__CLASS__, 'enqueue_admin_assets'));
 
@@ -25,24 +31,26 @@ class SBS_Admin
                 add_action($hook_name, array(__CLASS__, $handler_method));
             }
         }
+    }
 
-        /**
-         * TODO: deprecated
-         */
-        // Hook form submit action for customers
-        // add_action('admin_post_sbs_add_customer', array(__CLASS__, 'handle_customer_form'));
-        // add_action('admin_post_sbs_edit_customer', array(__CLASS__, 'handle_customer_form'));
-        // add_action('admin_post_sbs_delete_customer', array(__CLASS__, 'handle_customer_form'));
-
-        // // Hook form submit action for accounts
-        // add_action('admin_post_sbs_add_account', array(__CLASS__, 'handle_account_form'));
-        // add_action('admin_post_sbs_edit_account', array(__CLASS__, 'handle_account_form'));
-        // add_action('admin_post_sbs_delete_account', array(__CLASS__, 'handle_account_form'));
-
-        // // Hook form submit action for transactions
-        // add_action('admin_post_sbs_add_transaction', array(__CLASS__, 'handle_transaction_form'));
-        // add_action('admin_post_sbs_edit_transaction', array(__CLASS__, 'handle_transaction_form'));
-        // add_action('admin_post_sbs_delete_transaction', array(__CLASS__, 'handle_transaction_form'));
+    /**
+     * Remove unnecessary menus from user with role 'Editor'
+     */
+    public static function remove_comments_menu_for_editors()
+    {
+        // Check if the current user is an Editor
+        if (current_user_can('editor')) {
+            // Remove Dashboard menu
+            remove_menu_page('index.php');
+            // Remove Posts menu
+            remove_menu_page('edit.php');
+            // Remove Comments menu
+            remove_menu_page('edit-comments.php');
+            // Remove Profile menu
+            remove_menu_page('profile.php');
+            // Remove Tools menu
+            remove_menu_page('tools.php');
+        }
     }
 
     /**
@@ -71,7 +79,7 @@ class SBS_Admin
         add_menu_page(
             __('Simple Banking System', 'simple-bank-system'),
             __('Banking', 'simple-bank-system'),
-            'manage_options',
+            self::$role,
             'sbs-dashboard',
             array(__CLASS__, 'render_dashboard'),
             'dashicons-bank',
@@ -90,7 +98,7 @@ class SBS_Admin
                 'sbs-dashboard',
                 $title,
                 $title,
-                'manage_options',
+                self::$role,
                 'sbs-' . $slug,
                 array(__CLASS__, 'render_' . $slug)
             );
@@ -125,7 +133,7 @@ class SBS_Admin
      */
     public static function render_dashboard()
     {
-        if (!current_user_can('manage_options')) {
+        if (!current_user_can(self::$role)) {
             wp_die(__('Unauthorized access', 'simple-bank-system'));
         }
 
@@ -147,7 +155,7 @@ class SBS_Admin
     public static function render_customers()
     {
         // Check user capabilities
-        if (! current_user_can('manage_options')) {
+        if (! current_user_can(self::$role)) {
             wp_die(__('Unauthorized access', 'simple-bank-system'));
         }
 
@@ -178,7 +186,7 @@ class SBS_Admin
     public static function render_accounts()
     {
         // Check user capabilities
-        if (! current_user_can('manage_options')) {
+        if (! current_user_can(self::$role)) {
             wp_die(__('Unauthorized access', 'simple-bank-system'));
         }
 
@@ -209,7 +217,7 @@ class SBS_Admin
     public static function render_transactions()
     {
         // Check user capabilities
-        if (! current_user_can('manage_options')) {
+        if (! current_user_can(self::$role)) {
             wp_die(__('Unauthorized access', 'simple-bank-system'));
         }
 
@@ -236,7 +244,7 @@ class SBS_Admin
                 wp_die(__('Invalid nonce.', 'simple-bank-system'));
             }
 
-            if (!current_user_can('manage_options')) {
+            if (!current_user_can(self::$role)) {
                 wp_die(__('Unauthorized access.', 'simple-bank-system'));
             }
 
@@ -271,7 +279,7 @@ class SBS_Admin
             }
 
             // Check capabilities
-            if (!current_user_can('manage_options')) {
+            if (!current_user_can(self::$role)) {
                 wp_die(__('Unauthorized access.', 'simple-bank-system'));
             }
 
@@ -373,7 +381,7 @@ class SBS_Admin
                 wp_die(__('Invalid request.', 'simple-bank-system'));
             }
 
-            if (!current_user_can('manage_options')) {
+            if (!current_user_can(self::$role)) {
                 wp_die(__('Unauthorized access.', 'simple-bank-system'));
             }
 
@@ -408,7 +416,7 @@ class SBS_Admin
             }
 
             // Check capabilities
-            if (!current_user_can('manage_options')) {
+            if (!current_user_can(self::$role)) {
                 wp_die(__('Unauthorized access.', 'simple-bank-system'));
             }
 
@@ -475,7 +483,7 @@ class SBS_Admin
                 wp_die(__('Invalid nonce.', 'simple-bank-system'));
             }
 
-            if (!current_user_can('manage_options')) {
+            if (!current_user_can(self::$role)) {
                 wp_die(__('Unauthorized access.', 'simple-bank-system'));
             }
 
@@ -510,7 +518,7 @@ class SBS_Admin
             }
 
             // Check capabilities
-            if (!current_user_can('manage_options')) {
+            if (!current_user_can(self::$role)) {
                 wp_die(__('Unauthorized access.', 'simple-bank-system'));
             }
 
