@@ -111,7 +111,7 @@ $submit_text = $is_edit ? __('Update Account', 'simple-bank-system') : __('Add A
             </div>
 
             <div style="white-space: nowrap; margin-top:40px;">
-                <a href="<?php echo remove_query_arg('action', esc_URL(admin_url('admin.php?page=sbs-accounts'))); ?>" class="page-title-action" style="display: inline; top: 0; margin-right: 10px;">
+                <a href="<?php echo remove_query_arg('action', esc_URL(admin_url('admin.php?page=sbs-accounts'))); ?>" class="page-title-action" style="top: 0; margin-right: 10px;">
                     <?php esc_html_e('&laquo; Back', 'simple-bank-system'); ?>
                 </a>
                 <p class="submit" style="display: inline; margin: 0;">

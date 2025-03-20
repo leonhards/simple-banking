@@ -27,3 +27,60 @@
 .sbs-admin .wp-list-table .column-actions a.button.button-delete {
     color: rgb(211, 51, 51);
 }
+
+/* Dashboard Summary */
+.sbs-dashboard-widgets h2 {
+    margin-top: 50px;
+}
+
+.sbs-dashboard-summary {
+    display: flex;
+    gap: 20px;
+}
+
+.dashboard-box {
+    text-align: center;
+    flex: 1;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 30px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dashboard-box span {
+    display: block;
+    font-weight: 400;
+    font-size: 14px;
+    margin-bottom: 7px;
+}
+
+table.sbs-dashboard-recent-transaction {
+    width: 560px;
+    border-collapse: collapse;
+
+    & th,
+    & td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    & th {
+        background-color: #f1f1f1;
+        text-align: left;
+    }
+
+    & thead>tr {
+        border-top: 2px solid #ddd;
+        border-bottom: 2px solid #ddd;
+    }
+
+    & tr {
+        border-bottom: 1px solid #ddd;
+    }
+
+    & tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+}

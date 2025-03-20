@@ -26,6 +26,16 @@ register_activation_hook(__FILE__, array('SBS_Database', 'activate'));
 // Load core files
 require_once SBS_PATH . 'includes/class-sbs-core.php';
 
+function sbs_register_dashboard_widget()
+{
+    wp_add_dashboard_widget(
+        'sbs_dashboard_widget',           // Widget ID
+        'Banking Overview',               // Widget Title
+        'sbs_dashboard_widget_content'    // Callback function to display content
+    );
+}
+add_action('wp_dashboard_setup', 'sbs_register_dashboard_widget');
+
 // Initialize plugin
 add_action('plugins_loaded', array('SBS_Core', 'init'));
 

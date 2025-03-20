@@ -28,6 +28,7 @@ class SBS_Core
     private static function load_dependencies()
     {
         // Database and core components
+        require_once SBS_PATH . 'includes/class-sbs-dashboard.php';
         require_once SBS_PATH . 'includes/class-sbs-customer.php';
         require_once SBS_PATH . 'includes/class-sbs-account.php';
         require_once SBS_PATH . 'includes/class-sbs-transaction.php';
