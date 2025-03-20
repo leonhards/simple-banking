@@ -15,8 +15,8 @@ class SBS_Customer_List_Table extends WP_List_Table
     public function __construct()
     {
         parent::__construct(array(
-            'singular' => __('Customer', 'simple-bank-system'),
-            'plural'   => __('Customers', 'simple-bank-system'),
+            'singular' => __('Customer', PLUGIN_TEXT_DOMAIN),
+            'plural'   => __('Customers', PLUGIN_TEXT_DOMAIN),
             'ajax'     => false
         ));
     }
@@ -27,12 +27,12 @@ class SBS_Customer_List_Table extends WP_List_Table
     public function get_columns()
     {
         return array(
-            'cif_number'    => __('CIF Number', 'simple-bank-system'),
-            'full_name'     => __('Name', 'simple-bank-system'),
-            'address'       => __('Address', 'simple-bank-system'),
-            'email'         => __('Email', 'simple-bank-system'),
-            'date_of_birth' => __('Date of Birth', 'simple-bank-system'),
-            'actions'       => __('Actions', 'simple-bank-system')
+            'cif_number'    => __('CIF Number', PLUGIN_TEXT_DOMAIN),
+            'full_name'     => __('Name', PLUGIN_TEXT_DOMAIN),
+            'address'       => __('Address', PLUGIN_TEXT_DOMAIN),
+            'email'         => __('Email', PLUGIN_TEXT_DOMAIN),
+            'date_of_birth' => __('Date of Birth', PLUGIN_TEXT_DOMAIN),
+            'actions'       => __('Actions', PLUGIN_TEXT_DOMAIN)
         );
     }
 
@@ -154,9 +154,9 @@ class SBS_Customer_List_Table extends WP_List_Table
                     '<a href="%s" class="button button-edit">%s</a> ' .
                         '<a href="%s" class="button button-delete" onclick="return confirm(\'Are you sure you want to delete this customer?\')">%s</a>',
                     esc_url($edit_url),
-                    esc_html__('Edit', 'simple-bank-system'),
+                    esc_html__('Edit', PLUGIN_TEXT_DOMAIN),
                     esc_url($delete_url),
-                    esc_html__('Delete', 'simple-bank-system')
+                    esc_html__('Delete', PLUGIN_TEXT_DOMAIN)
                 );
             default:
                 return print_r($item, true);

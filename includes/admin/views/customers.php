@@ -11,19 +11,19 @@ if (!defined('ABSPATH')) {
 
 // Determine if we're in edit mode
 $is_edit = !empty($customer);
-$form_title  = $is_edit ? __('Edit Customer', 'simple-bank-system') : __('Add Customer', 'simple-bank-system');
+$form_title  = $is_edit ? __('Edit Customer', PLUGIN_TEXT_DOMAIN) : __('Add Customer', PLUGIN_TEXT_DOMAIN);
 $form_action  = $is_edit ? 'sbs_edit_customer' : 'sbs_add_customer';
 $form_nonce = $is_edit ? 'sbs_edit_customer_' . $customer['id'] : 'sbs_add_customer';
-$submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add Customer', 'simple-bank-system');
+$submit_text = $is_edit ? __('Update Customer', PLUGIN_TEXT_DOMAIN) : __('Add Customer', PLUGIN_TEXT_DOMAIN);
 ?>
 
 <div class="wrap sbs-admin">
 
     <?php if (! isset($_GET['action']) || $_GET['action'] === 'sbs_delete_customer') : ?>
         <h1 class="wp-heading-inline">
-            <?php esc_html_e('Manage Customers', 'simple-bank-system'); ?>
+            <?php esc_html_e('Manage Customers', PLUGIN_TEXT_DOMAIN); ?>
             <a href="<?php echo esc_url(admin_url('admin.php?page=sbs-customers&action=add')); ?>" class="page-title-action">
-                <?php esc_html_e('Add New', 'simple-bank-system'); ?>
+                <?php esc_html_e('Add New', PLUGIN_TEXT_DOMAIN); ?>
             </a>
         </h1>
 
@@ -60,7 +60,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
             <?php wp_nonce_field($form_nonce, 'sbs_customer_nonce'); ?>
 
             <div class="form-field">
-                <label for="cif_number"><?php esc_html_e('CIF Number', 'simple-bank-system'); ?></label>
+                <label for="cif_number"><?php esc_html_e('CIF Number', PLUGIN_TEXT_DOMAIN); ?></label>
                 <input type="text"
                     name="cif_number"
                     id="cif_number"
@@ -70,7 +70,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
             </div>
 
             <div class="form-field">
-                <label for="full_name"><?php esc_html_e('Full Name', 'simple-bank-system'); ?></label>
+                <label for="full_name"><?php esc_html_e('Full Name', PLUGIN_TEXT_DOMAIN); ?></label>
                 <input type="text"
                     name="full_name"
                     id="full_name"
@@ -79,7 +79,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
             </div>
 
             <div class="form-field">
-                <label for="address"><?php esc_html_e('Address', 'simple-bank-system'); ?></label>
+                <label for="address"><?php esc_html_e('Address', PLUGIN_TEXT_DOMAIN); ?></label>
                 <input type="text"
                     name="address"
                     id="address"
@@ -88,7 +88,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
             </div>
 
             <div class="form-field">
-                <label for="email"><?php esc_html_e('Email', 'simple-bank-system'); ?></label>
+                <label for="email"><?php esc_html_e('Email', PLUGIN_TEXT_DOMAIN); ?></label>
                 <input type="email"
                     name="email"
                     id="email"
@@ -98,7 +98,7 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
             </div>
 
             <div class="form-field">
-                <label for="date_of_birth"><?php esc_html_e('Date of Birth', 'simple-bank-system'); ?></label>
+                <label for="date_of_birth"><?php esc_html_e('Date of Birth', PLUGIN_TEXT_DOMAIN); ?></label>
                 <input type="text"
                     name="date_of_birth"
                     id="date_of_birth"
@@ -107,12 +107,12 @@ $submit_text = $is_edit ? __('Update Customer', 'simple-bank-system') : __('Add 
                     placeholder="YYYY-MM-DD"
                     pattern="\d{4}-\d{2}-\d{2}"
                     required>
-                <p class="description"><?php esc_html_e('Format: YYYY-MM-DD', 'simple-bank-system'); ?></p>
+                <p class="description"><?php esc_html_e('Format: YYYY-MM-DD', PLUGIN_TEXT_DOMAIN); ?></p>
             </div>
 
             <div style="white-space: nowrap; margin-top:40px;">
                 <a href="<?php echo remove_query_arg('action', esc_URL(admin_url('admin.php?page=sbs-customers'))); ?>" class="page-title-action" style="top: 0; margin-right: 10px;">
-                    <?php esc_html_e('&laquo; Back', 'simple-bank-system'); ?>
+                    <?php esc_html_e('&laquo; Back', PLUGIN_TEXT_DOMAIN); ?>
                 </a>
                 <p class="submit" style="display: inline; margin: 0;">
                     <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php echo $submit_text; ?>">

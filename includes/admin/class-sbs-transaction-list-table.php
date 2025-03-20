@@ -15,8 +15,8 @@ class SBS_Transaction_List_Table extends WP_List_Table
     public function __construct()
     {
         parent::__construct(array(
-            'singular' => __('Transaction', 'simple-bank-system'),
-            'plural'   => __('Transactions', 'simple-bank-system'),
+            'singular' => __('Transaction', PLUGIN_TEXT_DOMAIN),
+            'plural'   => __('Transactions', PLUGIN_TEXT_DOMAIN),
             'ajax'     => false
         ));
     }
@@ -27,13 +27,13 @@ class SBS_Transaction_List_Table extends WP_List_Table
     public function get_columns()
     {
         return array(
-            'transaction_type' => __('Type', 'simple-bank-system'),
-            'account_number'   => __('Account No.', 'simple-bank-system'),
-            'customer_name'    => __('Customer', 'simple-bank-system'),
-            'transfer_account' => __('To', 'simple-bank-system'),
-            'amount'           => __('Amount', 'simple-bank-system'),
-            'description'      => __('Description', 'simple-bank-system'),
-            'created_at'       => __('Date', 'simple-bank-system')
+            'transaction_type' => __('Type', PLUGIN_TEXT_DOMAIN),
+            'account_number'   => __('Account No.', PLUGIN_TEXT_DOMAIN),
+            'customer_name'    => __('Customer', PLUGIN_TEXT_DOMAIN),
+            'transfer_account' => __('To', PLUGIN_TEXT_DOMAIN),
+            'amount'           => __('Amount', PLUGIN_TEXT_DOMAIN),
+            'description'      => __('Description', PLUGIN_TEXT_DOMAIN),
+            'created_at'       => __('Date', PLUGIN_TEXT_DOMAIN)
         );
     }
 

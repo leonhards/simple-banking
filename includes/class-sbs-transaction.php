@@ -22,7 +22,7 @@ class SBS_Transaction
         $result = $wpdb->insert($table, $data);
 
         if (false === $result) {
-            return new WP_Error('db_error', __('Failed to save transaction data.', 'simple-bank-system'));
+            return new WP_Error('db_error', __('Failed to save transaction data.', PLUGIN_TEXT_DOMAIN));
         }
 
         return $wpdb->insert_id;
@@ -49,7 +49,7 @@ class SBS_Transaction
         );
 
         if (false === $result) {
-            return new WP_Error('db_error', __('Failed to update customer.', 'simple-bank-system'));
+            return new WP_Error('db_error', __('Failed to update customer.', PLUGIN_TEXT_DOMAIN));
         }
 
         return $result;
@@ -73,7 +73,7 @@ class SBS_Transaction
         );
 
         if (false === $result) {
-            return new WP_Error('db_error', __('Failed to delete customer.', 'simple-bank-system'));
+            return new WP_Error('db_error', __('Failed to delete customer.', PLUGIN_TEXT_DOMAIN));
         }
 
         return $result;
@@ -126,7 +126,7 @@ class SBS_Transaction
         // Get the account
         $account = SBS_Account::get($transaction_data['account_id']);
         if (!$account) {
-            return new WP_Error('invalid_account', __('Invalid account.', 'simple-bank-system'));
+            return new WP_Error('invalid_account', __('Invalid account.', PLUGIN_TEXT_DOMAIN));
         }
 
         // Handle different transaction types
@@ -139,7 +139,7 @@ class SBS_Transaction
             case 'withdrawal':
                 // Check for sufficient balance
                 if ($account['balance'] < $transaction_data['amount']) {
-                    return new WP_Error('insufficient_balance', __('Insufficient balance.', 'simple-bank-system'));
+                    return new WP_Error('insufficient_balance', __('Insufficient balance.', PLUGIN_TEXT_DOMAIN));
                 }
                 // Update account balance
                 $new_balance = $account['balance'] - $transaction_data['amount'];
@@ -151,12 +151,12 @@ class SBS_Transaction
                 $target_account = SBS_Account::get($target_account_id);
 
                 if (!$target_account) {
-                    return new WP_Error('invalid_target_account', __('Invalid target account.', 'simple-bank-system'));
+                    return new WP_Error('invalid_target_account', __('Invalid target account.', PLUGIN_TEXT_DOMAIN));
                 }
 
                 // Check for sufficient balance
                 if ($account['balance'] < $transaction_data['amount']) {
-                    return new WP_Error('insufficient_balance', __('Insufficient balance.', 'simple-bank-system'));
+                    return new WP_Error('insufficient_balance', __('Insufficient balance.', PLUGIN_TEXT_DOMAIN));
                 }
 
                 // Update source account balance
@@ -168,7 +168,7 @@ class SBS_Transaction
                 break;
 
             default:
-                return new WP_Error('invalid_transaction_type', __('Invalid transaction type.', 'simple-bank-system'));
+                return new WP_Error('invalid_transaction_type', __('Invalid transaction type.', PLUGIN_TEXT_DOMAIN));
         }
 
         // Update the account balance

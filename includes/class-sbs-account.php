@@ -25,14 +25,14 @@ class SBS_Account
         ));
 
         if ($check_acct_number) {
-            return new WP_Error('duplicate_acct_number', __('The account number \'' . $data['account_number'] . '\' already exists.', 'simple-bank-system'));
+            return new WP_Error('duplicate_acct_number', __('The account number \'' . $data['account_number'] . '\' already exists.', PLUGIN_TEXT_DOMAIN));
         }
 
         // Insert the account into the database
         $result = $wpdb->insert($table, $data);
 
         if (false === $result) {
-            return new WP_Error('db_error', __('Failed to insert account.', 'simple-bank-system'));
+            return new WP_Error('db_error', __('Failed to insert account.', PLUGIN_TEXT_DOMAIN));
         }
 
         return $wpdb->insert_id;
@@ -54,7 +54,7 @@ class SBS_Account
         $result = $wpdb->update($table, $data, array('id' => $id));
 
         if (false === $result) {
-            return new WP_Error('db_error', __('Failed to update account.', 'simple-bank-system'));
+            return new WP_Error('db_error', __('Failed to update account.', PLUGIN_TEXT_DOMAIN));
         }
 
         return $result;
@@ -75,7 +75,7 @@ class SBS_Account
         $result = $wpdb->delete($table, array('id' => $id));
 
         if (false === $result) {
-            return new WP_Error('db_error', __('Failed to delete account.', 'simple-bank-system'));
+            return new WP_Error('db_error', __('Failed to delete account.', PLUGIN_TEXT_DOMAIN));
         }
 
         return $result;
@@ -94,7 +94,7 @@ class SBS_Account
 
         $account_id = absint($id);
         if (!$account_id) {
-            return new WP_Error('invalid_id', __('Invalid account ID.', 'simple-bank-system'));
+            return new WP_Error('invalid_id', __('Invalid account ID.', PLUGIN_TEXT_DOMAIN));
         }
 
         // Retrieve the account from the database
@@ -105,7 +105,7 @@ class SBS_Account
 
         // Check if the customer exists
         if (empty($account)) {
-            return new WP_Error('not_found', __('Account not found.', 'simple-bank-system'));
+            return new WP_Error('not_found', __('Account not found.', PLUGIN_TEXT_DOMAIN));
         }
 
         return $account;

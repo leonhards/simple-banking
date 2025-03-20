@@ -77,8 +77,8 @@ class SBS_Admin
     {
         // Main menu
         add_menu_page(
-            __('Simple Banking System', 'simple-bank-system'),
-            __('Banking', 'simple-bank-system'),
+            __('Simple Banking System', PLUGIN_TEXT_DOMAIN),
+            __('Banking', PLUGIN_TEXT_DOMAIN),
             self::$role,
             'sbs-dashboard',
             array(__CLASS__, 'render_dashboard'),
@@ -88,9 +88,9 @@ class SBS_Admin
 
         // Submenus
         $submenus = array(
-            'customers'     => __('Customers', 'simple-bank-system'),
-            'accounts'      => __('Accounts', 'simple-bank-system'),
-            'transactions'  => __('Transactions', 'simple-bank-system'),
+            'customers'     => __('Customers', PLUGIN_TEXT_DOMAIN),
+            'accounts'      => __('Accounts', PLUGIN_TEXT_DOMAIN),
+            'transactions'  => __('Transactions', PLUGIN_TEXT_DOMAIN),
         );
 
         foreach ($submenus as $slug => $title) {
@@ -134,11 +134,11 @@ class SBS_Admin
     public static function render_dashboard()
     {
         if (!current_user_can(self::$role)) {
-            wp_die(__('Unauthorized access', 'simple-bank-system'));
+            wp_die(__('Unauthorized access', PLUGIN_TEXT_DOMAIN));
         }
 
         echo '<div class="wrap">';
-        echo '<h1>' . esc_html__('Banking System Dashboard', 'simple-bank-system') . '</h1>';
+        echo '<h1>' . esc_html__('Banking System Dashboard', PLUGIN_TEXT_DOMAIN) . '</h1>';
         echo '<div class="sbs-dashboard-widgets">';
 
         // Add dashboard widgets
@@ -159,7 +159,7 @@ class SBS_Admin
     {
         // Check user capabilities
         if (! current_user_can(self::$role)) {
-            wp_die(__('Unauthorized access', 'simple-bank-system'));
+            wp_die(__('Unauthorized access', PLUGIN_TEXT_DOMAIN));
         }
 
         // Check if we're in edit mode
@@ -174,7 +174,7 @@ class SBS_Admin
             $customer = SBS_Customer::get($customer_id);
 
             if (!$customer) {
-                SBS_Admin_Notice::add('error', __('Customer not found.', 'simple-bank-system'));
+                SBS_Admin_Notice::add('error', __('Customer not found.', PLUGIN_TEXT_DOMAIN));
                 return;
             }
         }
@@ -190,7 +190,7 @@ class SBS_Admin
     {
         // Check user capabilities
         if (! current_user_can(self::$role)) {
-            wp_die(__('Unauthorized access', 'simple-bank-system'));
+            wp_die(__('Unauthorized access', PLUGIN_TEXT_DOMAIN));
         }
 
         // Check if we're in edit mode
@@ -205,7 +205,7 @@ class SBS_Admin
             $account = SBS_Account::get($account_id);
 
             if (!$account) {
-                SBS_Admin_Notice::add('error', __('Account not found.', 'simple-bank-system'));
+                SBS_Admin_Notice::add('error', __('Account not found.', PLUGIN_TEXT_DOMAIN));
                 return;
             }
         }
@@ -221,7 +221,7 @@ class SBS_Admin
     {
         // Check user capabilities
         if (! current_user_can(self::$role)) {
-            wp_die(__('Unauthorized access', 'simple-bank-system'));
+            wp_die(__('Unauthorized access', PLUGIN_TEXT_DOMAIN));
         }
 
         // Display customer list and form
@@ -239,16 +239,16 @@ class SBS_Admin
         if ($_REQUEST['action'] === 'sbs_delete_customer') {
             // Validate delete request
             if (!isset($_GET['id']) || !isset($_GET['_wpnonce'])) {
-                wp_die(__('Invalid request.', 'simple-bank-system'));
+                wp_die(__('Invalid request.', PLUGIN_TEXT_DOMAIN));
             }
 
             $customer_id = absint($_GET['id']);
             if (!wp_verify_nonce($_GET['_wpnonce'], 'sbs_delete_customer_' . $customer_id)) {
-                wp_die(__('Invalid nonce.', 'simple-bank-system'));
+                wp_die(__('Invalid nonce.', PLUGIN_TEXT_DOMAIN));
             }
 
             if (!current_user_can(self::$role)) {
-                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+                wp_die(__('Unauthorized access.', PLUGIN_TEXT_DOMAIN));
             }
 
             // Perform deletion
@@ -258,7 +258,7 @@ class SBS_Admin
             if (is_wp_error($result)) {
                 SBS_Admin_Notice::add('error', $result->get_error_message());
             } else {
-                SBS_Admin_Notice::add('success', __('Customer deleted successfully', 'simple-bank-system'));
+                SBS_Admin_Notice::add('success', __('Customer deleted successfully', PLUGIN_TEXT_DOMAIN));
             }
 
             // Redirect to Customer table
@@ -278,12 +278,12 @@ class SBS_Admin
 
             // Verify nonce
             if (!wp_verify_nonce($_POST['sbs_customer_nonce'], $nonce_action)) {
-                wp_die(__('Unauthorized action', 'simple-bank-system'));
+                wp_die(__('Unauthorized action', PLUGIN_TEXT_DOMAIN));
             }
 
             // Check capabilities
             if (!current_user_can(self::$role)) {
-                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+                wp_die(__('Unauthorized access.', PLUGIN_TEXT_DOMAIN));
             }
 
             // Sanitize data
@@ -298,7 +298,7 @@ class SBS_Admin
             // Validate required fields
             foreach ($customer_data as $value) {
                 if (empty($value)) {
-                    SBS_Admin_Notice::add('error', __('All fields are required', 'simple-bank-system'));
+                    SBS_Admin_Notice::add('error', __('All fields are required', PLUGIN_TEXT_DOMAIN));
                     $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
                     self::custom_admin_redirect($slug, $args);
                     exit;
@@ -307,7 +307,7 @@ class SBS_Admin
 
             // Validate CIF number format
             if (!preg_match('/^\d+$/', $customer_data['cif_number'])) {
-                SBS_Admin_Notice::add('error', __('Invalid CIF format. Use numbers only.', 'simple-bank-system'));
+                SBS_Admin_Notice::add('error', __('Invalid CIF format. Use numbers only.', PLUGIN_TEXT_DOMAIN));
                 $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
                 self::custom_admin_redirect($slug, $args);
                 exit;
@@ -316,21 +316,21 @@ class SBS_Admin
             // Date validation
             $dob = $customer_data['date_of_birth'];
             if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
-                SBS_Admin_Notice::add('error', __('Invalid date format. Use YYYY-MM-DD.', 'simple-bank-system'));
+                SBS_Admin_Notice::add('error', __('Invalid date format. Use YYYY-MM-DD.', PLUGIN_TEXT_DOMAIN));
                 $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
                 self::custom_admin_redirect($slug, $args);
                 exit;
             }
 
             if (strtotime($dob) > time()) {
-                SBS_Admin_Notice::add('error', __('Date of birth cannot be in the future.', 'simple-bank-system'));
+                SBS_Admin_Notice::add('error', __('Date of birth cannot be in the future.', PLUGIN_TEXT_DOMAIN));
                 $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
                 self::custom_admin_redirect($slug, $args);
                 exit;
             }
 
             if (strtotime($dob) < strtotime('1900-01-01')) {
-                SBS_Admin_Notice::add('error', __('Date of birth must be after 1900.', 'simple-bank-system'));
+                SBS_Admin_Notice::add('error', __('Date of birth must be after 1900.', PLUGIN_TEXT_DOMAIN));
                 $args = $is_edit ? ['action' => 'edit', 'id' => $customer_id] : ['action' => 'add'];
                 self::custom_admin_redirect($slug, $args);
                 exit;
@@ -348,8 +348,8 @@ class SBS_Admin
                 SBS_Admin_Notice::add('error', $result->get_error_message());
             } else {
                 $notice = $is_edit
-                    ? __('Customer updated successfully.', 'simple-bank-system')
-                    : __('Customer created successfully.', 'simple-bank-system');
+                    ? __('Customer updated successfully.', PLUGIN_TEXT_DOMAIN)
+                    : __('Customer created successfully.', PLUGIN_TEXT_DOMAIN);
                 SBS_Admin_Notice::add('success', $notice);
             }
 
@@ -371,21 +371,21 @@ class SBS_Admin
         if ($_REQUEST['action'] === 'sbs_delete_account') {
             // Validate delete request
             if (!isset($_GET['id']) || !isset($_GET['_wpnonce'])) {
-                wp_die(__('Invalid request.', 'simple-bank-system'));
+                wp_die(__('Invalid request.', PLUGIN_TEXT_DOMAIN));
             }
 
             $account_id = absint($_GET['id']);
             if (!wp_verify_nonce($_GET['_wpnonce'], 'sbs_delete_account_' . $account_id)) {
-                wp_die(__('Invalid nonce.', 'simple-bank-system'));
+                wp_die(__('Invalid nonce.', PLUGIN_TEXT_DOMAIN));
             }
 
             // Verify nonce and permissions
             if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'sbs_delete_account_' . $_GET['id'])) {
-                wp_die(__('Invalid request.', 'simple-bank-system'));
+                wp_die(__('Invalid request.', PLUGIN_TEXT_DOMAIN));
             }
 
             if (!current_user_can(self::$role)) {
-                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+                wp_die(__('Unauthorized access.', PLUGIN_TEXT_DOMAIN));
             }
 
             // Delete the account
@@ -395,7 +395,7 @@ class SBS_Admin
             if (is_wp_error($result)) {
                 SBS_Admin_Notice::add('error', $result->get_error_message());
             } else {
-                SBS_Admin_Notice::add('success', __('Account deleted successfully.', 'simple-bank-system'));
+                SBS_Admin_Notice::add('success', __('Account deleted successfully.', PLUGIN_TEXT_DOMAIN));
             }
 
             // Redirect to Account table
@@ -415,12 +415,12 @@ class SBS_Admin
 
             // Verify nonce
             if (!wp_verify_nonce($_POST['sbs_account_nonce'], $nonce_action)) {
-                wp_die(__('Unauthorized action', 'simple-bank-system'));
+                wp_die(__('Unauthorized action', PLUGIN_TEXT_DOMAIN));
             }
 
             // Check capabilities
             if (!current_user_can(self::$role)) {
-                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+                wp_die(__('Unauthorized access.', PLUGIN_TEXT_DOMAIN));
             }
 
             // Sanitize input data
@@ -435,7 +435,7 @@ class SBS_Admin
             // Validate required fields
             foreach ($account_data as $value) {
                 if (empty($value)) {
-                    SBS_Admin_Notice::add('error', __('All fields are required', 'simple-bank-system'));
+                    SBS_Admin_Notice::add('error', __('All fields are required', PLUGIN_TEXT_DOMAIN));
                     $args = $is_edit ? ['action' => 'edit', 'id' => $account_id] : ['action' => 'add'];
                     self::custom_admin_redirect($slug, $args);
                     exit;
@@ -454,8 +454,8 @@ class SBS_Admin
                 SBS_Admin_Notice::add('error', $result->get_error_message());
             } else {
                 $notice = $is_edit
-                    ? __('Account updated successfully.', 'simple-bank-system')
-                    : __('Account created successfully.', 'simple-bank-system');
+                    ? __('Account updated successfully.', PLUGIN_TEXT_DOMAIN)
+                    : __('Account created successfully.', PLUGIN_TEXT_DOMAIN);
                 SBS_Admin_Notice::add('success', $notice);
             }
 
@@ -478,16 +478,16 @@ class SBS_Admin
         if ($_REQUEST['action'] === 'sbs_delete_transaction') {
             // Validate delete request
             if (!isset($_GET['id']) || !isset($_GET['_wpnonce'])) {
-                wp_die(__('Invalid request.', 'simple-bank-system'));
+                wp_die(__('Invalid request.', PLUGIN_TEXT_DOMAIN));
             }
 
             $transaction_id = absint($_GET['id']);
             if (!wp_verify_nonce($_GET['_wpnonce'], 'sbs_delete_customer_' . $transaction_id)) {
-                wp_die(__('Invalid nonce.', 'simple-bank-system'));
+                wp_die(__('Invalid nonce.', PLUGIN_TEXT_DOMAIN));
             }
 
             if (!current_user_can(self::$role)) {
-                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+                wp_die(__('Unauthorized access.', PLUGIN_TEXT_DOMAIN));
             }
 
             // Perform deletion
@@ -497,7 +497,7 @@ class SBS_Admin
             if (is_wp_error($result)) {
                 SBS_Admin_Notice::add('error', $result->get_error_message());
             } else {
-                SBS_Admin_Notice::add('success', __('Transaction deleted successfully', 'simple-bank-system'));
+                SBS_Admin_Notice::add('success', __('Transaction deleted successfully', PLUGIN_TEXT_DOMAIN));
             }
 
             // Redirect to Customer table
@@ -517,12 +517,12 @@ class SBS_Admin
 
             // Verify nonce
             if (!wp_verify_nonce($_POST['sbs_transaction_nonce'], $nonce_action)) {
-                wp_die(__('Unauthorized action', 'simple-bank-system'));
+                wp_die(__('Unauthorized action', PLUGIN_TEXT_DOMAIN));
             }
 
             // Check capabilities
             if (!current_user_can(self::$role)) {
-                wp_die(__('Unauthorized access.', 'simple-bank-system'));
+                wp_die(__('Unauthorized access.', PLUGIN_TEXT_DOMAIN));
             }
 
             // Sanitize input data
@@ -536,7 +536,7 @@ class SBS_Admin
             // Validate required fields
             foreach ($transaction_data as $value) {
                 if (empty($value)) {
-                    SBS_Admin_Notice::add('error', __('All fields are required', 'simple-bank-system'));
+                    SBS_Admin_Notice::add('error', __('All fields are required', PLUGIN_TEXT_DOMAIN));
                     $args = $is_edit ? ['action' => 'edit', 'id' => $transaction_id] : ['action' => 'add'];
                     self::custom_admin_redirect($slug, $args);
                     exit;
@@ -559,8 +559,8 @@ class SBS_Admin
                 SBS_Admin_Notice::add('error', $result->get_error_message());
             } else {
                 $notice = $is_edit
-                    ? __('Transaction updated successfully.', 'simple-bank-system')
-                    : __('Transaction created successfully.', 'simple-bank-system');
+                    ? __('Transaction updated successfully.', PLUGIN_TEXT_DOMAIN)
+                    : __('Transaction created successfully.', PLUGIN_TEXT_DOMAIN);
                 SBS_Admin_Notice::add('success', $notice);
             }
 

@@ -16,8 +16,8 @@ class SBS_Account_List_Table extends WP_List_Table
     public function __construct()
     {
         parent::__construct(array(
-            'singular' => __('Account', 'simple-bank-system'),
-            'plural'   => __('Accounts', 'simple-bank-system'),
+            'singular' => __('Account', PLUGIN_TEXT_DOMAIN),
+            'plural'   => __('Accounts', PLUGIN_TEXT_DOMAIN),
             'ajax'     => false
         ));
     }
@@ -28,12 +28,12 @@ class SBS_Account_List_Table extends WP_List_Table
     public function get_columns()
     {
         return array(
-            'account_number' => __('Account No.', 'simple-bank-system'),
-            'customer_name'  => __('Name', 'simple-bank-system'),
-            'account_type'   => __('Type', 'simple-bank-system'),
-            'balance'        => __('Balance (Rp)', 'simple-bank-system'),
-            'status'         => __('Status', 'simple-bank-system'),
-            'actions'        => __('Actions', 'simple-bank-system')
+            'account_number' => __('Account No.', PLUGIN_TEXT_DOMAIN),
+            'customer_name'  => __('Name', PLUGIN_TEXT_DOMAIN),
+            'account_type'   => __('Type', PLUGIN_TEXT_DOMAIN),
+            'balance'        => __('Balance (Rp)', PLUGIN_TEXT_DOMAIN),
+            'status'         => __('Status', PLUGIN_TEXT_DOMAIN),
+            'actions'        => __('Actions', PLUGIN_TEXT_DOMAIN)
         );
     }
 
@@ -158,9 +158,9 @@ class SBS_Account_List_Table extends WP_List_Table
                     '<a href="%s" class="button button-edit">%s</a> ' .
                         '<a href="%s" class="button button-delete" onclick="return confirm(\'Are you sure you want to delete this customer?\')">%s</a>',
                     esc_url($edit_url),
-                    esc_html__('Edit', 'simple-bank-system'),
+                    esc_html__('Edit', PLUGIN_TEXT_DOMAIN),
                     esc_url($delete_url),
-                    esc_html__('Delete', 'simple-bank-system')
+                    esc_html__('Delete', PLUGIN_TEXT_DOMAIN)
                 );
             default:
                 return isset($item[$column_name]) ? esc_html($item[$column_name]) : '';
