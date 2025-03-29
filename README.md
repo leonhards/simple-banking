@@ -21,7 +21,7 @@ Before starting, ensure you have installed:
    cd wordpress-docker
    ```
 
-2. Clone the repository containing the docker-compose.yaml file:
+# 2. Clone the repository containing the docker-compose.yaml file:
 
    ```sh
    git clone https://github.com/your-repo/simple-banking.git
