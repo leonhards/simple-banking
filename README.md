@@ -4,8 +4,6 @@
 ![WordPress](https://img.shields.io/badge/WordPress-Plugin%20Ready-blue?logo=wordpress)
 ![GPLv2](https://img.shields.io/badge/License-GPL%20v2%2B-blue.svg)
 
-A robust WordPress plugin to manage customers, accounts, and transactions in a banking system. Built for developers and financial enthusiasts to explore core banking operations within WordPress.
-
 A **foundational implementation** of banking operations within WordPress, providing core structures for managing customers, accounts, and transactions.
 
 Designed as:
