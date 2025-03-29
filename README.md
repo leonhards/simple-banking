@@ -8,9 +8,9 @@ A **foundational implementation** of banking operations within WordPress, provid
 
 Designed as:
 
-- 🧩 A starter project for extending financial systems in WordPress
-- 🔍 A learning tool for banking transaction workflows
-- � Modular foundation for custom banking solutions
+- 🧩 A starter project for extending financial systems in WordPress.
+- 🔍 A learning tool for banking transaction workflows.
+- � Modular foundation for custom banking solutions.
 
 ## 🚀 Core Functionality
 
@@ -18,7 +18,7 @@ Designed as:
 
 - **Customer Management**
 
-  - Full CRUD operations for customer profiles
+  - Full CRUD operations for customer profiles.
   - Track comprehensive details:
     - Name
     - ID/CIF numbers
@@ -29,7 +29,7 @@ Designed as:
 
 - **Account Management**
 
-  - Complete account lifecycle management
+  - Complete account lifecycle management.
   - Supports:
     - Savings/Deposit account types
     - Balance tracking
@@ -59,7 +59,7 @@ Designed as:
   - WordPress authentication integration
   - Role-based access control
   - SQL injection prevention
-  - nput/output sanitization
+  - Input/output sanitization
 
 - **Deployment**
   - Docker containerization
@@ -82,13 +82,13 @@ git clone https://github.com/leonhards/simple-banking.git
 
 ### 2. Set Up Docker
 
-Copy the docker-compose.yaml to your project root
+Copy the docker-compose.yaml to your project root.
 
 ```sh
 cp simple-banking/docker-compose.yaml ./
 ```
 
-Start the containers
+Start the containers.
 
 ```sh
 docker-compose up -d
@@ -96,7 +96,7 @@ docker-compose up -d
 
 ### 3. Install the Plugin
 
-Move the plugin to WordPress's plugins directory (replace with your actual path)
+Move the plugin to WordPress's plugins directory (replace with your actual path).
 
 ```sh
 mv simple-banking/simple-bank-system ./wp-content/plugins/
