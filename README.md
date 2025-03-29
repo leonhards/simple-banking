@@ -6,42 +6,63 @@
 
 A robust WordPress plugin to manage customers, accounts, and transactions in a banking system. Built for developers and financial enthusiasts to explore core banking operations within WordPress.
 
----
+A **foundational implementation** of banking operations within WordPress, providing core structures for managing customers, accounts, and transactions.
 
-## 🚀 Features
+Designed as:
 
-### Core Functionality
+- 🧩 A starter project for extending financial systems in WordPress
+- 🔍 A learning tool for banking transaction workflows
+- � Modular foundation for custom banking solutions
+
+## 🚀 Core Functionality
+
+### Essential Banking Operations
 
 - **Customer Management**
-  - Create, Read, Update, Delete (CRUD) customer profiles.
-  - Track customer details: name, ID number, CIF number, address, email, date of birth, and more.
+
+  - Full CRUD operations for customer profiles
+  - Track comprehensive details:
+    • Name • ID/CIF numbers • Address • Email
+    • Date of birth • Account creation date
+
 - **Account Management**
-  - CRUD operations for bank accounts.
-  - Supports account types (savings, deposits), balances, and customer associations.
+
+  - Complete account lifecycle management
+  - Supports:
+    • Savings/Deposit account types
+    • Balance tracking • Customer associations
+    • Basic account statements
+
 - **Transaction System**
-  - Deposit, withdraw, and transfer funds between accounts.
-  - Real-time balance updates with overdraft prevention (no negative balances).
+  - Core operations:
+    • Deposits • Withdrawals • Inter-account transfers
+  - Safety features:
+    • Real-time balance updates
+    • Overdraft prevention
+    • Transaction logging (basic audit trail)
+
+### Infrastructure & Security
+
 - **Database**
-  - Built on a relational database (MySQL) for scalable data management.
-- **Security**
-  - User authentication and role-based access.
-  - Input sanitization to prevent SQL injection.
+  MySQL relational database with:
+  • Normalized table structure
+  • Scalable data relationships
 
-### Optional Enhancements
+- **Security Framework**
+  • WordPress authentication integration
+  • Role-based access control
+  • SQL injection prevention
+  • Input/output sanitization
 
-- Transaction logging and audit trails.
-- Account statements with date/type filters.
-- Dockerized for seamless deployment.
-
----
+- **Deployment**
+  • Docker containerization
+  • Including docker-compose.yaml file
 
 ## 📋 Prerequisites
 
 - **Docker** ([Install Guide](https://www.docker.com/))
 - **Docker Compose** ([Install Guide](https://docs.docker.com/compose/))
 - **Git** ([Install Guide](https://git-scm.com/))
-
----
 
 ## 🛠️ Installation & Setup
 
@@ -97,8 +118,6 @@ This project is open to the community! Feel free to:
 - ⭐ Star the repository if you find it useful.
 - 🐛 Report issues or suggest features via GitHub Issues.
 - 🛠️ Submit pull requests for enhancements or bug fixes.
-
----
 
 ## 📜 License
 
