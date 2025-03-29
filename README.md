@@ -1,53 +1,109 @@
-# Simple Banking Plugin
+# Simple Banking Plugin for WordPress
 
-## Overview
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
+![WordPress](https://img.shields.io/badge/WordPress-Plugin%20Ready-blue?logo=wordpress)
+![GPLv2](https://img.shields.io/badge/License-GPL%20v2%2B-blue.svg)
 
-This is a WordPress plugin for a simple banking system, developed as a custom plugin. The project is containerized using Docker for easy deployment and local development.
+A robust WordPress plugin to manage customers, accounts, and transactions in a banking system. Built for developers and financial enthusiasts to explore core banking operations within WordPress.
 
-## Prerequisites
+---
 
-Before starting, ensure you have installed:
+## 🚀 Features
 
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [Git](https://git-scm.com/)
+### Core Functionality
 
-## Build Docker Container
+- **Customer Management**
+  - Create, Read, Update, Delete (CRUD) customer profiles.
+  - Track customer details: name, ID number, CIF number, address, email, date of birth, and more.
+- **Account Management**
+  - CRUD operations for bank accounts.
+  - Supports account types (savings, deposits), balances, and customer associations.
+- **Transaction System**
+  - Deposit, withdraw, and transfer funds between accounts.
+  - Real-time balance updates with overdraft prevention (no negative balances).
+- **Database**
+  - Built on a relational database (MySQL) for scalable data management.
+- **Security**
+  - User authentication and role-based access.
+  - Input sanitization to prevent SQL injection.
 
-1. Create a new directory for your WordPress project and navigate into it:
+### Optional Enhancements
 
-   ```sh
-   mkdir wordpress-docker
-   cd wordpress-docker
-   ```
+- Transaction logging and audit trails.
+- Account statements with date/type filters.
+- Dockerized for seamless deployment.
 
-# 2. Clone the repository containing the docker-compose.yaml file:
+---
 
-   ```sh
-   git clone https://github.com/your-repo/simple-banking.git
-   ```
+## 📋 Prerequisites
 
-3. Copy docker-compose.yaml into the root directory.
+- **Docker** ([Install Guide](https://www.docker.com/))
+- **Docker Compose** ([Install Guide](https://docs.docker.com/compose/))
+- **Git** ([Install Guide](https://git-scm.com/))
 
-4. Run the following command to build and start the WordPress and MySQL containers:
+---
 
-   ```sh
-   docker-compose up -d
-   ```
+## 🛠️ Installation & Setup
 
-5. Move plugin file under wp-content/plugins/
+### 1. Clone the Repository
 
-## Running in Docker
+```bash
+mkdir wordpress-docker && cd wordpress-docker
+git clone https://github.com/your-repo/simple-banking.git
+```
 
-1. Access WordPress at `http://localhost:8005/wp-admin`.
+### 2. Set Up Docker
 
-2. If this is the first time running, install the WordPress by following the interactive prompts.
+Copy the docker-compose.yaml to your project root
 
-3. In login page page, use account below (setup on the docker-compose.yaml):
+```sh
+cp simple-banking/docker-compose.yaml ./
+```
 
-   - **Username:** admin
-   - **Password:** admin
+Start the containers
 
-4. On the left menu, click Plugins > Installed Plugins then activate 'Simple Bank System'.
+```sh
+docker-compose up -d
+```
 
-5. New menu will be added called 'Banking'.
+### 3. Install the Plugin
+
+Move the plugin to WordPress's plugins directory (replace with your actual path)
+
+```sh
+mv simple-banking/simple-bank-system ./wp-content/plugins/
+```
+
+## 🖥️ Usage
+
+### 1. Access WordPress Admin
+
+Visit `http://localhost:8005/wp-admin`.
+
+### 2. Activate the Plugin
+
+- Navigate to `Plugins → Installed Plugins`.
+- Then Activate `Simple Bank System`.
+
+### 3. Start Banking!
+
+- A `Banking` menu will appear in the WordPress dashboard.
+- Manage customers, accounts, and transactions directly from WordPress.
+
+## 🌐 Contributions
+
+This project is open to the community! Feel free to:
+
+- ⭐ Star the repository if you find it useful.
+- 🐛 Report issues or suggest features via GitHub Issues.
+- 🛠️ Submit pull requests for enhancements or bug fixes.
+
+---
+
+## 📜 License
+
+This project is licensed under **GPL-2.0-or-later** - see the [GNU General Public License v2.0](https://www.gnu.org/licenses/gpl-2.0.html) for full details.
+
+---
+
+Happy Banking! 🏦
