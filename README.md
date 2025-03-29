@@ -67,9 +67,9 @@ Designed as:
 
 ## 📋 Prerequisites
 
-- **Docker** (<a href="https://www.docker.com/" target="_blank">Install Guide</a>)
-- **Docker Compose** (<a href="https://docs.docker.com/compose/" target="_blank">Install Guide</a>)
-- **Git** (<a href="https://git-scm.com/" target="_blank">Install Guide</a>)
+- **Docker** (<a href="https://www.docker.com/">Install Guide</a>)
+- **Docker Compose** (<a href="https://docs.docker.com/compose/">Install Guide</a>)
+- **Git** (<a href="https://git-scm.com/">Install Guide</a>)
 
 ## 🛠️ Installation & Setup
 
