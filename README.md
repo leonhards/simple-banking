@@ -14,32 +14,39 @@ Designed as:
 
 ## 🚀 Core Functionality
 
-### Essential Banking Operations
+### A. Essential Banking Operations
 
 - **Customer Management**
 
   - Full CRUD operations for customer profiles
   - Track comprehensive details:
-    • Name • ID/CIF numbers • Address • Email
-    • Date of birth • Account creation date
+    - Name
+    - ID/CIF numbers
+    - Address
+    - Email
+    - Date of birth
+    - Account creation date
 
 - **Account Management**
 
   - Complete account lifecycle management
   - Supports:
-    • Savings/Deposit account types
-    • Balance tracking • Customer associations
-    • Basic account statements
+    - Savings/Deposit account types
+    - Balance tracking
+    - Customer associations
+    - Basic account statements
 
 - **Transaction System**
   - Core operations:
-    • Deposits • Withdrawals • Inter-account transfers
+    - Deposits
+    - Withdrawals
+    - transfer funds between accounts
   - Safety features:
-    • Real-time balance updates
-    • Overdraft prevention
-    • Transaction logging (basic audit trail)
+    - Real-time balance updates
+    - Overdraft prevention
+    - Transaction logging (basic audit trail)
 
-### Infrastructure & Security
+### B. Infrastructure & Security
 
 - **Database**
   MySQL relational database with:
@@ -58,9 +65,9 @@ Designed as:
 
 ## 📋 Prerequisites
 
-- **Docker** ([Install Guide](https://www.docker.com/))
-- **Docker Compose** ([Install Guide](https://docs.docker.com/compose/))
-- **Git** ([Install Guide](https://git-scm.com/))
+- **Docker** (<a href="https://www.docker.com/" target="_blank">Install Guide</a>)
+- **Docker Compose** (<a href="https://docs.docker.com/compose/" target="_blank">Install Guide</a>)
+- **Git** (<a href="https://git-scm.com/" target="_blank">Install Guide</a>)
 
 ## 🛠️ Installation & Setup
 
@@ -68,7 +75,7 @@ Designed as:
 
 ```bash
 mkdir wordpress-docker && cd wordpress-docker
-git clone https://github.com/your-repo/simple-banking.git
+git clone https://github.com/leonhards/simple-banking.git
 ```
 
 ### 2. Set Up Docker
