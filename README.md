@@ -50,18 +50,20 @@ Designed as:
 
 - **Database**
   MySQL relational database with:
-  • Normalized table structure
-  • Scalable data relationships
+
+  - Normalized table structure
+  - Scalable data relationships
 
 - **Security Framework**
-  • WordPress authentication integration
-  • Role-based access control
-  • SQL injection prevention
-  • Input/output sanitization
+
+  - WordPress authentication integration
+  - Role-based access control
+  - SQL injection prevention
+  - nput/output sanitization
 
 - **Deployment**
-  • Docker containerization
-  • Including docker-compose.yaml file
+  - Docker containerization
+  - Including docker-compose.yaml file
 
 ## 📋 Prerequisites
 
